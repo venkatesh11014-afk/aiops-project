@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { api } from "../utils/api";
+import LiquidGlass, { GlassPanel, GlassStatCard, GlassAlert } from "../components/LiquidGlass";
+
 
 const SUGGESTIONS = [
   "Any issues overnight I should know about?",
@@ -112,7 +114,7 @@ export default function Copilot() {
       {/* Messages */}
       <div style={{
         flex: 1, overflow: "auto", padding: "20px",
-        background: "#080d1a", border: "1px solid #1a2d4a", borderTop: "none", borderBottom: "none",
+        background: "transparent", border: "1px solid #1a2d4a", borderTop: "none", borderBottom: "none",
       }}>
         {messages.map((msg, i) => <Message key={i} msg={msg} />)}
 
@@ -125,7 +127,7 @@ export default function Copilot() {
               fontSize: 14, color: "white",
             }}>⬡</div>
             <div style={{
-              padding: "12px 16px", background: "#0d1729", border: "1px solid #1a2d4a",
+              padding: "12px 16px", background: "transparent", border: "1px solid #1a2d4a",
               borderRadius: "4px 12px 12px 12px",
               display: "flex", alignItems: "center", gap: 6,
             }}>
@@ -144,13 +146,13 @@ export default function Copilot() {
       {/* Suggestions */}
       {messages.length < 3 && (
         <div style={{
-          padding: "10px 16px", background: "#0a1020",
+          padding: "10px 16px", background: "transparent",
           border: "1px solid #1a2d4a", borderTop: "none",
           display: "flex", flexWrap: "wrap", gap: 6,
         }}>
           {SUGGESTIONS.map(s => (
             <button key={s} onClick={() => send(s)} style={{
-              padding: "5px 12px", fontSize: 11, background: "#0d1729",
+              padding: "5px 12px", fontSize: 11, background: "transparent",
               border: "1px solid #1a2d4a", color: "#64748b", borderRadius: 20,
               cursor: "pointer", transition: "all 0.15s",
             }}
@@ -163,11 +165,11 @@ export default function Copilot() {
 
       {/* Input */}
       <div style={{
-        background: "#0a1020", border: "1px solid #1a2d4a", borderTop: "none",
+        background: "transparent", border: "1px solid #1a2d4a", borderTop: "none",
         borderRadius: "0 0 12px 12px", padding: "14px 16px",
       }}>
         <div style={{
-          display: "flex", gap: 10, background: "#080d1a",
+          display: "flex", gap: 10, background: "transparent",
           border: "1px solid #1a2d4a", borderRadius: 10, padding: "8px 8px 8px 16px",
         }}>
           <input

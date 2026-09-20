@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../utils/api";
+import LiquidGlass, { GlassPanel, GlassStatCard, GlassAlert } from "../components/LiquidGlass";
+
 
 function MiniBar({ value, max = 100, color }) {
   const pct = Math.min(100, (value / max) * 100);
@@ -118,7 +120,7 @@ export default function Servers() {
         {/* Detail Panel */}
         {sel && (
           <div style={{ width: 280, flexShrink: 0 }}>
-            <div style={{ background: "#0d1729", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
+            <div style={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
               {(() => {
                 const cfg = STATUS_CFG[sel.status] || STATUS_CFG.healthy;
                 return (
@@ -144,7 +146,7 @@ export default function Servers() {
                       </div>
                     ))}
 
-                    <div style={{ marginTop: 14, padding: 10, background: "#080d1a", borderRadius: 8 }}>
+                    <div style={{ marginTop: 14, padding: 10, background: "transparent", borderRadius: 8 }}>
                       <div style={{ fontSize: 10, color: "#4a6fa5", marginBottom: 4 }}>LAST CHECKED</div>
                       <div style={{ fontSize: 11, color: "#64748b" }}>
                         {new Date(sel.last_checked).toLocaleTimeString()}

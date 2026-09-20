@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { api } from "../utils/api";
+import LiquidGlass, { GlassPanel, GlassStatCard, GlassAlert } from "../components/LiquidGlass";
+
 
 const LEVEL_CFG = {
   INFO:     { color: "#60a5fa", bg: "#0d1729", border: "#1a2d4a" },
@@ -51,9 +53,9 @@ export default function LogExplorer() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16, height: "calc(100vh - 120px)" }}>
       {/* Search Bar */}
-      <div style={{ background: "#0d1729", border: "1px solid #1a2d4a", borderRadius: 12, padding: 16 }}>
+      <div style={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12, padding: 16 }}>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <div style={{ flex: 1, display: "flex", gap: 0, background: "#080d1a", border: "1px solid #1a2d4a", borderRadius: 8, overflow: "hidden" }}>
+          <div style={{ flex: 1, display: "flex", gap: 0, background: "transparent", border: "1px solid #1a2d4a", borderRadius: 8, overflow: "hidden" }}>
             <span style={{ padding: "0 12px", display: "flex", alignItems: "center", color: "#4a6fa5", fontSize: 16 }}>⌕</span>
             <input
               value={query}
@@ -67,7 +69,7 @@ export default function LogExplorer() {
             />
           </div>
           <select value={level} onChange={e => setLevel(e.target.value)} style={{
-            background: "#080d1a", border: "1px solid #1a2d4a", color: "#94a3b8",
+            background: "transparent", border: "1px solid #1a2d4a", color: "#94a3b8",
             padding: "10px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer",
           }}>
             <option value="all">All Levels</option>
@@ -107,11 +109,11 @@ export default function LogExplorer() {
 
       {/* Log Stream */}
       <div style={{
-        flex: 1, background: "#060b14", border: "1px solid #1a2d4a", borderRadius: 12,
+        flex: 1, background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12,
         overflow: "auto", fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
       }}>
         <div style={{
-          position: "sticky", top: 0, background: "#0a1020", borderBottom: "1px solid #1a2d4a",
+          position: "sticky", top: 0, background: "transparent", borderBottom: "1px solid #1a2d4a",
           padding: "8px 16px", display: "flex", gap: 24, fontSize: 10, color: "#4a6fa5",
         }}>
           <span style={{ width: 160 }}>TIMESTAMP</span>

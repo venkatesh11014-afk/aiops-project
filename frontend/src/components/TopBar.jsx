@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-
-const PAGE_TITLES = {
-  dashboard: { title: "Operations Dashboard", sub: "Real-time system health overview" },
-  anomalies: { title: "Anomaly Detection", sub: "AI-powered threat and issue detection" },
-  logs: { title: "Log Explorer", sub: "Search and analyze system logs" },
-  servers: { title: "Server Fleet", sub: "Infrastructure health monitoring" },
-  copilot: { title: "AI Copilot", sub: "Natural language operations assistant" },
-};
+import LiquidGlass from "./LiquidGlass";
 
 export default function TopBar({ page }) {
   const [time, setTime] = useState(new Date());
@@ -15,44 +8,37 @@ export default function TopBar({ page }) {
     return () => clearInterval(t);
   }, []);
 
-  const { title, sub } = PAGE_TITLES[page] || {};
-
   return (
-    <header style={{
-      height: 64, background: "#0a1020", borderBottom: "1px solid #1a2540",
-      display: "flex", alignItems: "center", padding: "0 24px", gap: 16,
+    <LiquidGlass as="header" variant="regular" className="app-navbar" padding="0" style={{
+      height: 98,
+      display: "flex", alignItems: "center", padding: "0 34px", gap: 26,
       flexShrink: 0,
     }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#f1f5f9" }}>{title}</div>
-        <div style={{ fontSize: 12, color: "#3d5a80" }}>{sub}</div>
-      </div>
-
-      {/* Live indicator */}
-      <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 12px", background: "#0d1f35", border: "1px solid #1a3a5f", borderRadius: 6 }}>
-        <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#3b82f6", display: "inline-block", animation: "pulse 2s infinite", boxShadow: "0 0 8px #3b82f6" }} />
-        <span style={{ fontSize: 11, color: "#60a5fa", fontWeight: 600 }}>LIVE</span>
-      </div>
-
-      {/* Clock */}
-      <div style={{ padding: "5px 12px", background: "#0d1520", border: "1px solid #1a2540", borderRadius: 6 }}>
-        <div style={{ fontSize: 13, color: "#60a5fa", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
-          {time.toLocaleTimeString()}
+      <div className="topbar-left">
+        <div className="topbar-live" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "rgba(48,179,128,.16)", border: "1px solid rgba(93,220,170,.38)", borderRadius: 999 }}>
+          <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#62e49d", display: "inline-block", boxShadow: "0 0 8px #4ade80" }} />
+          <span style={{ fontSize: 13, color: "#72e9ae", fontWeight: 600 }}>All Systems Live</span>
         </div>
-        <div style={{ fontSize: 10, color: "#2a3f5f" }}>{time.toLocaleDateString()}</div>
+        <div className="topbar-search" style={{ width: 390, display: "flex", alignItems: "center", gap: 12, padding: "13px 17px", color: "#7185a8", background: "rgba(8,18,42,.52)", border: "1px solid rgba(144,175,233,.2)", borderRadius: 10, fontSize: 14 }}>
+          <span style={{ fontSize: 19 }}>⌕</span><span>Search systems, logs, alerts...</span>
+        </div>
       </div>
 
-      {/* Avatar */}
-      <div style={{
-        width: 36, height: 36, borderRadius: "50%",
-        background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 14, fontWeight: 700, color: "white", cursor: "pointer",
-      }}>OP</div>
+      <div className="topbar-right">
+        <div className="topbar-date" style={{ padding: "9px 12px", color: "#94a9ca", fontSize: 13, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+          {time.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} · {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </div>
+        <div style={{
+          width: 40, height: 40, borderRadius: "50%",
+          background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 13, fontWeight: 700, color: "white", cursor: "pointer",
+        }}>AT</div>
+      </div>
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
       `}</style>
-    </header>
+    </LiquidGlass>
   );
 }

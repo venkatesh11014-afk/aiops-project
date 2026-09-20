@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { api } from "../utils/api";
+import LiquidGlass, { GlassPanel, GlassStatCard, GlassAlert } from "../components/LiquidGlass";
+
 
 const SEVERITY_CONFIG = {
   CRITICAL: { color: "#ef4444", bg: "#1a0a0a", border: "#7f1d1d", icon: "🔴" },
@@ -63,7 +65,7 @@ export default function Anomalies() {
       {/* Left: Anomaly List */}
       <div style={{ width: 380, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
         {/* Filter tabs */}
-        <div style={{ display: "flex", gap: 8, background: "#0d1729", padding: 6, borderRadius: 10, border: "1px solid #1a2d4a" }}>
+        <div style={{ display: "flex", gap: 8, background: "transparent", padding: 6, borderRadius: 10, border: "1px solid #1a2d4a" }}>
           {["ALL", "CRITICAL", "HIGH", "MEDIUM", "LOW"].map(f => (
             <button key={f} onClick={() => setFilter(f)} style={{
               flex: 1, padding: "6px 4px", fontSize: 10, fontWeight: 600,
@@ -127,7 +129,7 @@ export default function Anomalies() {
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
           {/* Header */}
           <div style={{
-            background: "#0d1729", border: `1px solid ${sc.border}`, borderRadius: 12, padding: 20,
+            background: "transparent", border: `1px solid ${sc.border}`, borderRadius: 12, padding: 20,
             borderTop: `3px solid ${sc.color}`,
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -148,7 +150,7 @@ export default function Anomalies() {
               </div>
             </div>
 
-            <div style={{ marginTop: 12, padding: 12, background: "#080d1a", borderRadius: 8, border: "1px solid #1a2d4a" }}>
+            <div style={{ marginTop: 12, padding: 12, background: "transparent", borderRadius: 8, border: "1px solid #1a2d4a" }}>
               <div style={{ fontSize: 11, color: "#4a6fa5", marginBottom: 4 }}>RECOMMENDED ACTION</div>
               <div style={{ fontSize: 13, color: "#94a3b8" }}>{selected.recommended_action}</div>
             </div>
@@ -193,7 +195,7 @@ export default function Anomalies() {
           )}
 
           {/* Radar Chart */}
-          <div style={{ background: "#0d1729", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
+          <div style={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: "#94a3b8", marginBottom: 12 }}>
               Anomaly Signature — Metric Fingerprint
             </div>
@@ -202,13 +204,13 @@ export default function Anomalies() {
                 <PolarGrid stroke="#1a2d4a" />
                 <PolarAngleAxis dataKey="metric" tick={{ fill: "#64748b", fontSize: 11 }} />
                 <Radar dataKey="value" stroke={sc.color} fill={sc.color} fillOpacity={0.15} strokeWidth={2} />
-                <Tooltip contentStyle={{ background: "#0a1020", border: "1px solid #1a2d4a", borderRadius: 8 }} />
+                <Tooltip contentStyle={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 8 }} />
               </RadarChart>
             </ResponsiveContainer>
           </div>
 
           {/* Raw Metrics */}
-          <div style={{ background: "#0d1729", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
+          <div style={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: "#94a3b8", marginBottom: 12 }}>Raw Metrics at Detection Time</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
               {[
@@ -219,7 +221,7 @@ export default function Anomalies() {
                 { l: "Response", v: `${selected.log.response_time_ms}ms`, c: selected.log.response_time_ms > 2000 ? "#ef4444" : "#06b6d4" },
                 { l: "Failed Logins", v: selected.log.failed_logins, c: selected.log.failed_logins > 10 ? "#ef4444" : "#64748b" },
               ].map(m => (
-                <div key={m.l} style={{ padding: "10px 12px", background: "#080d1a", borderRadius: 8, border: "1px solid #1a2d4a" }}>
+                <div key={m.l} style={{ padding: "10px 12px", background: "transparent", borderRadius: 8, border: "1px solid #1a2d4a" }}>
                   <div style={{ fontSize: 10, color: "#4a6fa5" }}>{m.l}</div>
                   <div style={{ fontSize: 18, fontWeight: 700, color: m.c, marginTop: 2 }}>{m.v}</div>
                 </div>

@@ -1,3 +1,5 @@
+import LiquidGlass, { GlassBadge } from "./LiquidGlass";
+
 const NAV = [
   { id: "dashboard", label: "Dashboard", icon: "⬡" },
   { id: "anomalies", label: "Anomalies", icon: "◈" },
@@ -8,54 +10,51 @@ const NAV = [
 
 export default function Sidebar({ page, setPage }) {
   return (
-    <aside style={{
-      width: 220, background: "#0a1020", borderRight: "1px solid #1a2540",
+    <LiquidGlass as="aside" variant="regular" className="app-sidebar" padding="0" style={{
+      width: 260,
       display: "flex", flexDirection: "column", padding: "0",
       flexShrink: 0,
     }}>
       {/* Logo */}
-      <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid #1a2540" }}>
+      <div className="sidebar-brand" style={{ padding: "28px 22px 24px", borderBottom: "1px solid rgba(146,185,255,.12)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{
-            width: 36, height: 36, borderRadius: 10,
+            width: 42, height: 42, borderRadius: 12,
             background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, fontWeight: 700,
+            fontSize: 20, fontWeight: 700,
           }}>⬡</div>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: "#f1f5f9", letterSpacing: "0.02em" }}>AIOps</div>
-            <div style={{ fontSize: 11, color: "#4a6fa5", letterSpacing: "0.05em" }}>COPILOT</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#f1f5f9", letterSpacing: "0.02em" }}>AIOps</div>
+            <div style={{ fontSize: 12, color: "#7188ad", letterSpacing: "0.05em" }}>CO-PILOT</div>
           </div>
         </div>
       </div>
 
       {/* Status pill */}
-      <div style={{ padding: "12px 20px", borderBottom: "1px solid #1a2540" }}>
-        <div style={{
-          display: "flex", alignItems: "center", gap: 8, padding: "6px 10px",
-          background: "#0d1f0d", border: "1px solid #1a4a1a", borderRadius: 6,
-        }}>
-          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 6px #22c55e" }} />
-          <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 600 }}>All Systems Live</span>
-        </div>
+      <div className="sidebar-status" style={{ padding: "20px 22px", borderBottom: "1px solid rgba(146,185,255,.12)" }}>
+        <GlassBadge className="system-status" style={{ display: "flex", width: "100%", gap: 8, color: "#5ee889" }}>
+          
+          <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600, alignItems: "center" }}>Command Centre</span>
+        </GlassBadge>
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: "12px 12px" }}>
+      <nav className="sidebar-nav" style={{ flex: 1, padding: "16px 14px" }}>
         {NAV.map(item => (
           <button
             key={item.id}
             onClick={() => setPage(item.id)}
             style={{
               display: "flex", alignItems: "center", gap: 10, width: "100%",
-              padding: "10px 12px", marginBottom: 4, borderRadius: 8,
+              padding: "12px 14px", marginBottom: 6, borderRadius: 9,
               border: "none", cursor: "pointer", textAlign: "left",
               background: page === item.id
                 ? item.accent ? "linear-gradient(135deg, #1e1b4b, #1a1035)" : "#0f1e3a"
                 : "transparent",
               borderLeft: page === item.id ? `3px solid ${item.accent ? "#8b5cf6" : "#3b82f6"}` : "3px solid transparent",
               color: page === item.id ? (item.accent ? "#a78bfa" : "#60a5fa") : "#64748b",
-              fontSize: 13, fontWeight: page === item.id ? 600 : 400,
+              fontSize: 14, fontWeight: page === item.id ? 600 : 400,
               transition: "all 0.15s",
             }}
           >
@@ -73,10 +72,10 @@ export default function Sidebar({ page, setPage }) {
       </nav>
 
       {/* Bottom */}
-      <div style={{ padding: "16px 20px", borderTop: "1px solid #1a2540" }}>
-        <div style={{ fontSize: 11, color: "#2a3f5f", marginBottom: 4 }}>Monitoring since</div>
-        <div style={{ fontSize: 12, color: "#3d5a80" }}>12 servers · 24/7</div>
+      <div className="sidebar-footer" style={{ padding: "20px 22px", borderTop: "1px solid rgba(146,185,255,.12)" }}>
+        <div style={{ fontSize: 12, color: "#647a9d", marginBottom: 5 }}>Monitoring since</div>
+        <div style={{ fontSize: 13, color: "#8194b2" }}>12 servers · 24/7</div>
       </div>
-    </aside>
+    </LiquidGlass>
   );
 }
