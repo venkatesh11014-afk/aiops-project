@@ -1,0 +1,1058 @@
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg-base: #eceef1;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f5f6f7;
+  --bg-overlay: #e6e8eb;
+  --bg-hover: #e1e4e8;
+  --border-subtle: rgba(42, 48, 58, .1);
+  --border-default: rgba(42, 48, 58, .16);
+  --border-strong: rgba(42, 48, 58, .24);
+  --border-focus: rgba(37, 99, 235, .52);
+  --text-primary: #172033;
+  --text-secondary: #52627a;
+  --text-muted: #77849a;
+  --text-dim: #9ba6b5;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] #root {
+  background: #eceef1;
+  color: #172033;
+}
+
+html[data-theme="light"] body {
+  background-image: linear-gradient(135deg, #f1f2f4 0%, #e8eaed 100%);
+}
+
+html[data-theme="light"] .app-frame {
+  border-color: rgba(42, 48, 58, .18);
+  color: #172033;
+  background: linear-gradient(145deg, #f0f1f3, #e9ebee);
+}
+
+html[data-theme="light"] .sidebar-card,
+html[data-theme="light"] .topbar-card {
+  border-width: 1.5px;
+  border-color: rgba(39, 57, 84, .12);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(248, 250, 253, .94));
+  box-shadow:
+    0 8px 24px rgba(27, 39, 58, .07),
+    inset 0 1px 0 rgba(255, 255, 255, .95);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+html[data-theme="light"] .sidebar-brand,
+html[data-theme="light"] .sidebar-footer {
+  border-color: rgba(39, 57, 84, .1);
+  background: rgba(42, 67, 103, .018);
+}
+
+html[data-theme="light"] .sidebar-brand-name,
+html[data-theme="light"] .topbar-title {
+  color: #172033;
+}
+
+html[data-theme="light"] .sidebar-brand-subtitle,
+html[data-theme="light"] .sidebar-section-label,
+html[data-theme="light"] .sidebar-footer-label,
+html[data-theme="light"] .sidebar-version,
+html[data-theme="light"] .topbar-subtitle {
+  color: #77849a;
+}
+
+html[data-theme="light"] .sidebar-status {
+  border-color: rgba(5, 150, 105, .18);
+  background: rgba(16, 185, 129, .07);
+  color: #087a58;
+}
+
+html[data-theme="light"] .sidebar-link {
+  color: #52627a;
+}
+
+html[data-theme="light"] .sidebar-link:hover {
+  color: #172033;
+  background: rgba(48, 83, 137, .055);
+}
+
+html[data-theme="light"] .sidebar-link.is-active {
+  border-color: rgba(37, 99, 235, .13);
+  border-left-color: #3574d4;
+  color: #245eb4;
+  background: linear-gradient(100deg, rgba(59, 130, 246, .12), rgba(59, 130, 246, .035));
+  box-shadow: none;
+}
+
+html[data-theme="light"] .sidebar-link.is-active.is-ai {
+  border-color: rgba(124, 58, 237, .14);
+  border-left-color: #7951c7;
+  color: #6842b4;
+  background: linear-gradient(100deg, rgba(124, 58, 237, .1), rgba(59, 130, 246, .025));
+}
+
+html[data-theme="light"] .sidebar-footer-value {
+  color: #52627a;
+}
+
+html[data-theme="light"] .topbar-clock {
+  border-color: rgba(39, 57, 84, .12);
+  background: rgba(39, 57, 84, .035);
+}
+
+html[data-theme="light"] .topbar-clock-time {
+  color: #245eb4;
+}
+
+html[data-theme="light"] .topbar-clock-date {
+  color: #77849a;
+}
+
+html[data-theme="light"] .topbar-avatar {
+  border-color: rgba(90, 72, 173, .2);
+  box-shadow: 0 2px 8px rgba(66, 76, 116, .18);
+}
+
+html[data-theme="light"] .topbar-metrics > div {
+  border-color: rgba(39, 57, 84, .12) !important;
+  background: rgba(39, 57, 84, .035) !important;
+}
+
+html[data-theme="light"] .topbar-metrics > div > span:first-child {
+  color: #64748b !important;
+}
+
+html[data-theme="light"] .app-content {
+  color: #263449;
+  scrollbar-color: #c2cad6 transparent;
+}
+
+html[data-theme="light"] .app-content .card,
+html[data-theme="light"] .app-content .stat-card {
+  border-color: rgba(39, 57, 84, .12) !important;
+  background: rgba(255, 255, 255, .96) !important;
+  box-shadow:
+    0 5px 18px rgba(27, 39, 58, .055),
+    inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+}
+
+html[data-theme="light"] .app-content .card::before {
+  background: linear-gradient(90deg, transparent, rgba(94, 122, 164, .2), transparent);
+}
+
+html[data-theme="light"] .app-content .card:hover,
+html[data-theme="light"] .app-content .stat-card:hover {
+  border-color: rgba(47, 104, 189, .23) !important;
+  box-shadow: 0 8px 22px rgba(27, 39, 58, .08) !important;
+}
+
+html[data-theme="light"] .app-content .card [style*="color: rgb(240, 246, 255)"],
+html[data-theme="light"] .app-content .card [style*="color: rgb(230, 238, 252)"],
+html[data-theme="light"] .app-content .card [style*="color: rgba(240, 246, 255"],
+html[data-theme="light"] .app-content .stat-card [style*="color: rgb(240, 246, 255)"],
+html[data-theme="light"] .app-content .stat-card [style*="color: rgb(230, 238, 252)"],
+html[data-theme="light"] .app-content .stat-card [style*="color: rgba(240, 246, 255"] {
+  color: #263449 !important;
+}
+
+html[data-theme="light"] .app-content .card [style*="color: rgb(122, 156, 200)"],
+html[data-theme="light"] .app-content .card [style*="color: rgb(46, 74, 114)"],
+html[data-theme="light"] .app-content .stat-card [style*="color: rgb(122, 156, 200)"],
+html[data-theme="light"] .app-content .stat-card [style*="color: rgb(46, 74, 114)"] {
+  color: #52627a !important;
+}
+
+html[data-theme="light"] .app-content input,
+html[data-theme="light"] .app-content select,
+html[data-theme="light"] .app-content textarea {
+  border-color: rgba(39, 57, 84, .18) !important;
+  color: #263449 !important;
+  background: rgba(255, 255, 255, .88) !important;
+}
+
+html[data-theme="light"] .app-content input::placeholder,
+html[data-theme="light"] .app-content textarea::placeholder {
+  color: #8995a7;
+}
+
+html[data-theme="light"] .scan-overlay {
+  opacity: .12;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  min-height: 36px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 11px;
+  border: 1px solid rgba(132, 160, 197, .2);
+  border-radius: 9px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, .035);
+  font: 600 11px/1 var(--font-body);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.theme-toggle:hover {
+  border-color: rgba(96, 165, 250, .4);
+  color: var(--text-primary);
+  background: rgba(96, 165, 250, .09);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, .7);
+  outline-offset: 2px;
+}
+
+.theme-toggle svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+html[data-theme="light"] .theme-toggle {
+  border-color: rgba(39, 57, 84, .15);
+  color: #52627a;
+  background: rgba(39, 57, 84, .035);
+}
+
+html[data-theme="light"] .theme-toggle:hover {
+  border-color: rgba(37, 99, 235, .28);
+  color: #245eb4;
+  background: rgba(37, 99, 235, .06);
+}
+
+@media (max-width: 540px) {
+  .theme-toggle { width: 36px; padding: 0; }
+  .theme-toggle span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle { transition: none; }
+}
+
+/* Full-app minimalist palette for surfaces authored with inline dark styles. */
+html[data-theme="light"] .app-content {
+  --light-ink: #202b3d;
+  --light-muted: #68758a;
+  --light-border: rgba(42, 48, 58, .13);
+  --light-panel: #ffffff;
+  --light-panel-soft: #f5f6f7;
+  background:
+    linear-gradient(145deg, #f1f2f4, #e9ebee);
+}
+
+html[data-theme="light"] .app-content [style*="background: #070f1f"],
+html[data-theme="light"] .app-content [style*="background: #0a1628"],
+html[data-theme="light"] .app-content [style*="background: #0d1e38"],
+html[data-theme="light"] .app-content [style*="background: #040812"],
+html[data-theme="light"] .app-content [style*="background: #030814"],
+html[data-theme="light"] .app-content [style*="background: #07111f"],
+html[data-theme="light"] .app-content [style*="background: #0a192b"],
+html[data-theme="light"] .app-content [style*="background: #030711"],
+html[data-theme="light"] .app-content [style*="background: rgb(7, 15, 31)"],
+html[data-theme="light"] .app-content [style*="background: rgb(10, 22, 40)"],
+html[data-theme="light"] .app-content [style*="background: rgb(13, 30, 56)"],
+html[data-theme="light"] .app-content [style*="background: rgb(4, 8, 18)"],
+html[data-theme="light"] .app-content [style*="background: rgb(3, 8, 20)"],
+html[data-theme="light"] .app-content [style*="background: rgb(7, 17, 31)"],
+html[data-theme="light"] .app-content [style*="background: rgb(10, 25, 43)"],
+html[data-theme="light"] .app-content [style*="background: rgb(3, 7, 17)"],
+html[data-theme="light"] .app-content [style*="background: rgba(7, 15, 31"],
+html[data-theme="light"] .app-content [style*="background: rgba(10, 22, 40"],
+html[data-theme="light"] .app-content [style*="background: rgba(5, 9, 20"],
+html[data-theme="light"] .app-content [style*="background: rgba(4, 8, 18"] {
+  border-color: var(--light-border) !important;
+  color: var(--light-ink) !important;
+  background: var(--light-panel) !important;
+  box-shadow: 0 3px 12px rgba(30, 44, 67, .045) !important;
+}
+
+html[data-theme="light"] .anomaly-filters {
+  border-color: rgba(42, 60, 88, .13) !important;
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgba(30, 44, 67, .04);
+}
+
+html[data-theme="light"] .anomalies-page .recharts-tooltip-wrapper > div {
+  border-color: rgba(42, 60, 88, .14) !important;
+  color: #263449 !important;
+  background: rgba(255, 255, 255, .98) !important;
+}
+
+html[data-theme="light"] .app-content [style*="rgba(7,15,31,0.6)"],
+html[data-theme="light"] .app-content [style*="rgba(7,15,31,0.97)"],
+html[data-theme="light"] .app-content [style*="rgba(5,9,20,0.99)"],
+html[data-theme="light"] .app-content [style*="rgba(4,8,18,0.97)"],
+html[data-theme="light"] .app-content [style*="rgba(10,22,40,0.7)"],
+html[data-theme="light"] .app-content [style*="rgba(10,8,30,0.98)"],
+html[data-theme="light"] .app-content [style*="rgba(8,13,26,0.98)"] {
+  border-color: var(--light-border) !important;
+  color: var(--light-ink) !important;
+  background: var(--light-panel) !important;
+  box-shadow: 0 3px 12px rgba(30, 44, 67, .045) !important;
+}
+
+html[data-theme="light"] .copilot-header,
+html[data-theme="light"] .copilot-messages,
+html[data-theme="light"] .copilot-suggestions,
+html[data-theme="light"] .copilot-composer,
+html[data-theme="light"] .copilot-typing {
+  border-color: rgba(42, 60, 88, .13) !important;
+  color: #202b3d;
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgba(30, 44, 67, .04);
+}
+
+html[data-theme="light"] .copilot-header {
+  border-radius: 14px 14px 0 0 !important;
+  background: linear-gradient(110deg, #fff, #f8f9fc) !important;
+}
+
+html[data-theme="light"] .copilot-messages {
+  background: #f8f9fc !important;
+}
+
+html[data-theme="light"] .copilot-composer {
+  border-radius: 0 0 14px 14px !important;
+}
+
+html[data-theme="light"] .copilot-agent-icon {
+  box-shadow: 0 2px 10px rgba(77, 84, 165, .18) !important;
+}
+
+html[data-theme="light"] .copilot-messages [style*="background: rgba(10,22,40"],
+html[data-theme="light"] .copilot-messages [style*="background: rgba(10, 22, 40"],
+html[data-theme="light"] .copilot-typing {
+  border-color: rgba(42, 60, 88, .12) !important;
+  color: #344258 !important;
+  background: #fff !important;
+  box-shadow: 0 2px 8px rgba(30, 44, 67, .04) !important;
+}
+
+html[data-theme="light"] .copilot-composer [style*="background: rgb(10, 22, 40)"],
+html[data-theme="light"] .copilot-composer [style*="background: #0a1628"] {
+  border-color: rgba(42, 60, 88, .18) !important;
+  background: #f8f9fc !important;
+}
+
+html[data-theme="light"] .log-stream {
+  border-color: rgba(42, 60, 88, .13) !important;
+  background: #fff !important;
+}
+
+html[data-theme="light"] .log-stream > div:first-child {
+  border-color: rgba(42, 60, 88, .12) !important;
+  color: #64748b !important;
+  background: #f6f7fa !important;
+}
+
+html[data-theme="light"] .log-stream > div:last-child > div {
+  border-bottom-color: rgba(42, 60, 88, .07) !important;
+}
+
+html[data-theme="light"] .log-stream > div:last-child > div:hover {
+  background: rgba(59, 130, 246, .055) !important;
+}
+
+html[data-theme="light"] .app-content .card,
+html[data-theme="light"] .app-content .stat-card,
+html[data-theme="light"] .app-content [style*="background: #070f1f"],
+html[data-theme="light"] .app-content [style*="background: #0a1628"],
+html[data-theme="light"] .app-content [style*="background: rgb(7, 15, 31)"],
+html[data-theme="light"] .app-content [style*="background: rgb(10, 22, 40)"] {
+  border-color: var(--light-border) !important;
+  background-color: #fff !important;
+}
+
+html[data-theme="light"] .app-content [style*="color: #f0f6ff"],
+html[data-theme="light"] .app-content [style*="color: #e6eefc"],
+html[data-theme="light"] .app-content [style*="color: #e2e8f0"],
+html[data-theme="light"] .app-content [style*="color: rgb(240, 246, 255)"],
+html[data-theme="light"] .app-content [style*="color: rgb(230, 238, 252)"],
+html[data-theme="light"] .app-content [style*="color: rgb(226, 232, 240)"],
+html[data-theme="light"] .app-content [style*="color: rgba(240,246,255"],
+html[data-theme="light"] .app-content [style*="color: rgba(240, 246, 255"] {
+  color: var(--light-ink) !important;
+}
+
+html[data-theme="light"] .app-content [style*="color: #7a9cc8"],
+html[data-theme="light"] .app-content [style*="color: #7890b2"],
+html[data-theme="light"] .app-content [style*="color: #2e4a72"],
+html[data-theme="light"] .app-content [style*="color: #1a2f4e"],
+html[data-theme="light"] .app-content [style*="color: rgb(122, 156, 200)"],
+html[data-theme="light"] .app-content [style*="color: rgb(120, 144, 178)"],
+html[data-theme="light"] .app-content [style*="color: rgb(46, 74, 114)"],
+html[data-theme="light"] .app-content [style*="color: rgb(26, 47, 78)"],
+html[data-theme="light"] .app-content [style*="color: rgba(240,246,255,0.65)"],
+html[data-theme="light"] .app-content [style*="color: rgba(240,246,255,0.75)"],
+html[data-theme="light"] .app-content [style*="color: rgba(240,246,255,0.8)"] {
+  color: var(--light-muted) !important;
+}
+
+html[data-theme="light"] .app-content [style*="color: #fca5a5"],
+html[data-theme="light"] .app-content [style*="color: #f87171"],
+html[data-theme="light"] .app-content [style*="color: rgb(252, 165, 165)"],
+html[data-theme="light"] .app-content [style*="color: rgb(248, 113, 113)"] {
+  color: #b93838 !important;
+}
+
+html[data-theme="light"] .app-content [style*="color: #fdba74"],
+html[data-theme="light"] .app-content [style*="color: #fde68a"],
+html[data-theme="light"] .app-content [style*="color: rgb(253, 186, 116)"],
+html[data-theme="light"] .app-content [style*="color: rgb(253, 230, 138)"] {
+  color: #96620e !important;
+}
+
+html[data-theme="light"] .app-content [style*="color: #93c5fd"],
+html[data-theme="light"] .app-content [style*="color: #bae6fd"],
+html[data-theme="light"] .app-content [style*="color: #60a5fa"],
+html[data-theme="light"] .app-content [style*="color: rgb(147, 197, 253)"],
+html[data-theme="light"] .app-content [style*="color: rgb(96, 165, 250)"] {
+  color: #285da8 !important;
+}
+
+html[data-theme="light"] .app-content [style*="color: #6ee7b7"] {
+  color: #087a58 !important;
+}
+
+html[data-theme="light"] .app-content input,
+html[data-theme="light"] .app-content select,
+html[data-theme="light"] .app-content textarea,
+html[data-theme="light"] .app-content input[style],
+html[data-theme="light"] .app-content textarea[style] {
+  border-color: rgba(47, 70, 104, .2) !important;
+  color: #202b3d !important;
+  background-color: #fff !important;
+  caret-color: #416fbd;
+}
+
+html[data-theme="light"] .app-content input::placeholder,
+html[data-theme="light"] .app-content textarea::placeholder {
+  color: #8a95a7 !important;
+}
+
+html[data-theme="light"] .app-content button:not(.theme-toggle) {
+  color-scheme: light;
+}
+
+html[data-theme="light"] .app-content .recharts-cartesian-axis-tick-value,
+html[data-theme="light"] .app-content .recharts-polar-angle-axis-tick-value {
+  fill: #69778d !important;
+}
+
+html[data-theme="light"] .app-content .recharts-cartesian-grid-horizontal line,
+html[data-theme="light"] .app-content .recharts-cartesian-grid-vertical line,
+html[data-theme="light"] .app-content .recharts-polar-grid-concentric path,
+html[data-theme="light"] .app-content .recharts-polar-grid-angle line {
+  stroke: rgba(73, 94, 127, .13) !important;
+}
+
+html[data-theme="light"] .recharts-tooltip-wrapper .recharts-default-tooltip {
+  border-color: rgba(42, 60, 88, .16) !important;
+  color: #202b3d !important;
+  background: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 8px 24px rgba(30, 44, 67, .1) !important;
+}
+
+html[data-theme="light"] .recharts-tooltip-label,
+html[data-theme="light"] .recharts-tooltip-item {
+  color: #52627a !important;
+}
+
+html[data-theme="light"] .app-content button[style*="background: rgba(255, 255, 255"],
+html[data-theme="light"] .app-content button[style*="background: rgba(255,255,255"] {
+  border-color: rgba(42, 60, 88, .13) !important;
+  color: #52627a !important;
+  background: #f5f6f9 !important;
+}
+
+html[data-theme="light"] .app-content button[style*="background: rgba(59, 130, 246"],
+html[data-theme="light"] .app-content button[style*="background: rgba(59,130,246"] {
+  color: #285da8 !important;
+}
+
+html[data-theme="light"] .app-content [style*="border-bottom: 1px solid rgba(255, 255, 255"],
+html[data-theme="light"] .app-content [style*="border: 1px solid rgba(255, 255, 255"] {
+  border-color: rgba(42, 60, 88, .11) !important;
+}
+
+/* Sidebar matches the compact white navigation rail in the reference. */
+html[data-theme="light"] .sidebar-card {
+  border-color: rgba(48, 63, 89, .14) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgba(35, 47, 67, .055) !important;
+}
+
+html[data-theme="light"] .sidebar-brand,
+html[data-theme="light"] .sidebar-footer {
+  border-color: rgba(48, 63, 89, .1) !important;
+  background: #fff !important;
+}
+
+html[data-theme="light"] .sidebar-brand-name {
+  color: #202938 !important;
+}
+
+html[data-theme="light"] .sidebar-brand-subtitle,
+html[data-theme="light"] .sidebar-section-label,
+html[data-theme="light"] .sidebar-footer-label,
+html[data-theme="light"] .sidebar-version {
+  color: #788397 !important;
+}
+
+html[data-theme="light"] .sidebar-navigation {
+  background: #fff;
+}
+
+html[data-theme="light"] .sidebar-link {
+  border-color: transparent !important;
+  color: #4c596d !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .sidebar-link:hover {
+  color: #263247 !important;
+  background: #f4f5f8 !important;
+}
+
+html[data-theme="light"] .sidebar-link.is-active {
+  border-color: rgba(96, 75, 174, .11) !important;
+  border-left: 2px solid #7561bf !important;
+  color: #263247 !important;
+  background: linear-gradient(90deg, rgba(117, 97, 191, .13), #f0eff7) !important;
+}
+
+html[data-theme="light"] .sidebar-link.is-active.is-ai {
+  border-left-color: #7957bd !important;
+  color: #5d4598 !important;
+  background: linear-gradient(90deg, rgba(124, 87, 189, .13), #f4f0fa) !important;
+}
+
+html[data-theme="light"] .sidebar-link.is-active > span:first-child {
+  color: #6c59b2 !important;
+}
+
+html[data-theme="light"] .sidebar-status {
+  border-color: rgba(48, 63, 89, .1) !important;
+  border-radius: 6px !important;
+  background: #f1f3f6 !important;
+}
+
+html[data-theme="light"] .sidebar-status > span:last-child {
+  color: #317b67 !important;
+}
+
+html[data-theme="light"] .sidebar-footer-detail {
+  color: #475569 !important;
+}
+
+/* Active alerts use a clean white card with a violet lead edge and action. */
+html[data-theme="light"] .alert-card {
+  position: relative;
+  border: 1px solid rgba(48, 63, 89, .12) !important;
+  border-left: 3px solid #7965bd !important;
+  border-radius: 9px !important;
+  background: linear-gradient(110deg, #f7f5fc 0%, #fff 72%) !important;
+  box-shadow: 0 2px 8px rgba(40, 48, 68, .045) !important;
+}
+
+html[data-theme="light"] .alert-card[data-severity="CRITICAL"] {
+  border-left-color: #d25b67 !important;
+  background: linear-gradient(110deg, #fff5f4 0%, #fff 72%) !important;
+}
+
+html[data-theme="light"] .alert-card[data-severity="HIGH"],
+html[data-theme="light"] .alert-card[data-severity="MEDIUM"] {
+  border-left-color: #c28a39 !important;
+  background: linear-gradient(110deg, #fffaf0 0%, #fff 72%) !important;
+}
+
+html[data-theme="light"] .alert-card-badges {
+  margin-bottom: 5px !important;
+}
+
+html[data-theme="light"] .alert-severity-badge {
+  gap: 0 !important;
+  padding: 2px 7px !important;
+  border-color: rgba(119, 94, 190, .17) !important;
+  border-radius: 4px !important;
+  color: #6550a4 !important;
+  background: #eeeafa !important;
+  font-size: 9px !important;
+}
+
+html[data-theme="light"] .alert-severity-badge > span {
+  display: none;
+}
+
+html[data-theme="light"] .alert-severity-badge[data-level="CRITICAL"] {
+  border-color: rgba(190, 73, 82, .16) !important;
+  color: #a73542 !important;
+  background: #fbecee !important;
+}
+
+html[data-theme="light"] .alert-severity-badge[data-level="LOW"] {
+  border-color: rgba(31, 133, 97, .16) !important;
+  color: #18734f !important;
+  background: #eaf6f0 !important;
+}
+
+html[data-theme="light"] .alert-card-message {
+  color: #293448 !important;
+  font-size: 12px !important;
+  font-weight: 500;
+}
+
+html[data-theme="light"] .alert-card-server {
+  color: #7a8495 !important;
+  font-size: 9px !important;
+}
+
+html[data-theme="light"] .alert-card-action {
+  padding: 4px 9px !important;
+  border: 1px solid rgba(104, 80, 184, .17) !important;
+  border-radius: 6px !important;
+  color: #6049a7 !important;
+  background: #f2effa !important;
+}
+
+html[data-theme="light"] .alert-card-action:hover:not(:disabled) {
+  border-color: rgba(104, 80, 184, .28) !important;
+  background: #eae5f7 !important;
+}
+
+html[data-theme="light"] .active-alert-count {
+  border-color: rgba(115, 91, 187, .16) !important;
+  border-radius: 5px !important;
+  color: #654fa5 !important;
+  background: #f0edf8 !important;
+}
+
+/* Dashboard labels stay crisp and high-contrast in the light palette. */
+html[data-theme="light"] .app-content .panel-title,
+html[data-theme="light"] .app-content .metric-row-label,
+html[data-theme="light"] .app-content .dashboard-live-label,
+html[data-theme="light"] .app-content .active-alert-count {
+  color: #000 !important;
+}
+
+/* Light surfaces for the detailed anomaly inspector and its nested panels. */
+html[data-theme="light"] .anomalies-page .anomaly-list-item,
+html[data-theme="light"] .anomalies-page .anomaly-detail-card {
+  border-color: rgba(42, 60, 88, .14) !important;
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgba(30, 44, 67, .05) !important;
+}
+
+html[data-theme="light"] .anomalies-page .anomaly-recommended-action,
+html[data-theme="light"] .anomalies-page .anomaly-raw-metric {
+  border-color: rgba(42, 60, 88, .12) !important;
+  color: #202b3d !important;
+  background: #f5f6fa !important;
+}
+
+html[data-theme="light"] .anomalies-page .anomaly-recommended-action > div:last-child,
+html[data-theme="light"] .anomalies-page .anomaly-raw-metric > div:first-child {
+  color: #202b3d !important;
+}
+
+/* Fleet cards and detail panel use soft white/gray surfaces instead of dark token fills. */
+html[data-theme="light"] .fleet-status-summary-label,
+html[data-theme="light"] .fleet-status-summary-caption {
+  color: #111827 !important;
+}
+
+html[data-theme="light"] .fleet-server-card,
+html[data-theme="light"] .fleet-detail-card {
+  border-color: rgba(42, 60, 88, .14) !important;
+  color: #202b3d !important;
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgba(30, 44, 67, .05) !important;
+}
+
+html[data-theme="light"] .fleet-server-card:hover {
+  border-color: rgba(75, 111, 171, .25) !important;
+  background: #fbfcfe !important;
+}
+
+html[data-theme="light"] .fleet-server-card.is-selected {
+  background: #f2f5f9 !important;
+  box-shadow: 0 5px 18px rgba(30, 44, 67, .1) !important;
+}
+
+html[data-theme="light"] .fleet-server-card.is-selected[data-status="healthy"] {
+  border-color: rgba(5, 150, 105, .55) !important;
+}
+
+html[data-theme="light"] .fleet-server-card.is-selected[data-status="warning"] {
+  border-color: rgba(217, 119, 6, .58) !important;
+}
+
+html[data-theme="light"] .fleet-server-card.is-selected[data-status="critical"] {
+  border-color: rgba(220, 38, 38, .58) !important;
+}
+
+html[data-theme="light"] .fleet-server-card-name {
+  color: #28364a;
+}
+
+html[data-theme="light"] .fleet-server-card.is-selected .fleet-server-card-name {
+  color: #18263a;
+}
+
+html[data-theme="light"] .fleet-server-card [style*="height: 3px"] {
+  background: #e8ecf2 !important;
+}
+
+html[data-theme="light"] .fleet-inspector {
+  border-color: rgba(42, 60, 88, .2);
+  color: #202b3d;
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(59, 130, 246, .07), transparent 45%),
+    linear-gradient(155deg, #fff, #f5f6f8);
+  box-shadow: 0 8px 28px rgba(30, 44, 67, .09);
+}
+
+html[data-theme="light"] .fleet-inspector-panel-title {
+  color: #344258;
+}
+
+html[data-theme="light"] .fleet-inspector-title h2 {
+  color: #202b3d;
+}
+
+html[data-theme="light"] .fleet-inspector-title > span,
+html[data-theme="light"] .fleet-inspector-section-label {
+  color: #6b778a;
+}
+
+html[data-theme="light"] .fleet-inspector-icon {
+  background: rgba(42, 60, 88, .04);
+}
+
+html[data-theme="light"] .fleet-inspector-metric-heading {
+  color: #4d5a6c;
+}
+
+html[data-theme="light"] .fleet-inspector-track {
+  background: rgba(42, 60, 88, .1);
+}
+
+html[data-theme="light"] .fleet-inspector-facts {
+  border-color: rgba(42, 60, 88, .14);
+}
+
+html[data-theme="light"] .fleet-inspector-facts > div {
+  border-color: rgba(42, 60, 88, .1);
+}
+
+html[data-theme="light"] .fleet-inspector-facts span,
+html[data-theme="light"] .fleet-inspector-foot {
+  color: #68758a;
+}
+
+html[data-theme="light"] .fleet-inspector-facts strong {
+  color: #263449;
+}
+
+html[data-theme="light"] .fleet-detail-card > div:first-child,
+html[data-theme="light"] .fleet-detail-card [style*="border-bottom"],
+html[data-theme="light"] .fleet-detail-card [style*="border-top"] {
+  border-color: rgba(42, 60, 88, .12) !important;
+}
+
+/* Log Explorer stream and filters share the same restrained white surfaces. */
+html[data-theme="light"] .log-toolbar {
+  border-color: rgba(42, 60, 88, .13) !important;
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgba(30, 44, 67, .04);
+}
+
+html[data-theme="light"] .log-stream {
+  background: #fff !important;
+}
+
+html[data-theme="light"] .log-stream > div:last-child > div {
+  color: #344258;
+  background-color: transparent;
+}
+
+html[data-theme="light"] .log-search-input {
+  position: relative;
+  isolation: isolate;
+  overflow: visible !important;
+  border-color: transparent !important;
+}
+
+html[data-theme="light"] .log-search-input::before {
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: 9px;
+  background: conic-gradient(
+    from var(--prompt-edge-angle),
+    transparent 0deg 245deg,
+    rgba(14, 165, 233, .22) 270deg,
+    #7dd3fc 300deg,
+    #38bdf8 325deg,
+    transparent 350deg
+  );
+  content: "";
+  opacity: .55;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: prompt-edge-orbit 4s linear infinite;
+}
+
+html[data-theme="light"] .log-search-input:focus-within::before,
+html[data-theme="light"] .log-search-input:hover::before {
+  opacity: 1;
+}
+
+html[data-theme="light"] .log-search-input > * {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-theme="light"] .log-stream > div:last-child > div > span:nth-child(1),
+html[data-theme="light"] .log-stream > div:last-child > div > span:nth-child(3),
+html[data-theme="light"] .log-stream > div:last-child > div > span:nth-child(4),
+html[data-theme="light"] .log-stream > div:last-child > div > span:nth-child(5) {
+  color: #202b3d !important;
+}
+
+/* Copilot keeps a light transcript, soft suggestion pills, and a clear composer. */
+html[data-theme="light"] .copilot-composer-input {
+  border-color: rgba(42, 60, 88, .15) !important;
+  background: #f4f6fa !important;
+}
+
+html[data-theme="light"] .copilot-composer-input input {
+  color: #202b3d !important;
+  background: transparent !important;
+}
+
+html[data-theme="light"] .copilot-composer-input input::placeholder {
+  color: #8792a4 !important;
+}
+
+html[data-theme="light"] .copilot-message-bubble {
+  border-color: rgba(42, 60, 88, .12) !important;
+  color: #263449 !important;
+  background: #fff !important;
+  box-shadow: 0 3px 10px rgba(30, 44, 67, .045) !important;
+}
+
+html[data-theme="light"] .copilot-message-bubble.is-user {
+  border-color: rgba(100, 82, 169, .16) !important;
+  color: #2c2940 !important;
+  background: #f0eef8 !important;
+  box-shadow: 0 3px 10px rgba(72, 62, 112, .055) !important;
+}
+
+html[data-theme="light"] .copilot-suggestions button {
+  border: 1px solid rgba(42, 60, 88, .13) !important;
+  color: #4b5870 !important;
+  background: #f7f8fb !important;
+}
+
+html[data-theme="light"] .copilot-suggestions button:hover {
+  border-color: rgba(104, 80, 184, .22) !important;
+  color: #5d4897 !important;
+  background: #f0eef8 !important;
+}
+
+/* Keep surface edges defined without overpowering the neutral light palette. */
+html[data-theme="light"] .app-content .card,
+html[data-theme="light"] .app-content .stat-card,
+html[data-theme="light"] .app-content .fleet-server-card,
+html[data-theme="light"] .app-content .fleet-detail-card,
+html[data-theme="light"] .app-content .anomaly-list-item,
+html[data-theme="light"] .app-content .anomaly-detail-card,
+html[data-theme="light"] .app-content .anomaly-filters,
+html[data-theme="light"] .app-content .log-toolbar,
+html[data-theme="light"] .app-content .log-stream,
+html[data-theme="light"] .app-content .copilot-header,
+html[data-theme="light"] .app-content .copilot-messages,
+html[data-theme="light"] .app-content .copilot-suggestions,
+html[data-theme="light"] .app-content .copilot-composer,
+html[data-theme="light"] .app-content .copilot-message-bubble,
+html[data-theme="light"] .fleet-status-summary-card {
+  border-color: #b8bdc5 !important;
+}
+
+html[data-theme="light"] .app-content .card,
+html[data-theme="light"] .app-content .stat-card,
+html[data-theme="light"] .app-content .fleet-server-card,
+html[data-theme="light"] .app-content .fleet-inspector,
+html[data-theme="light"] .app-content .fleet-detail-card,
+html[data-theme="light"] .app-content .anomaly-list-item,
+html[data-theme="light"] .app-content .anomaly-detail-card,
+html[data-theme="light"] .app-content .anomaly-filters,
+html[data-theme="light"] .app-content .log-toolbar,
+html[data-theme="light"] .app-content .log-stream,
+html[data-theme="light"] .app-content .copilot-header,
+html[data-theme="light"] .app-content .copilot-messages,
+html[data-theme="light"] .app-content .copilot-suggestions,
+html[data-theme="light"] .app-content .copilot-composer,
+html[data-theme="light"] .app-content .copilot-message-bubble,
+html[data-theme="light"] .fleet-status-summary-card {
+  border-width: 1.5px !important;
+}
+
+html[data-theme="light"] .app-content .anomaly-recommended-action,
+html[data-theme="light"] .app-content .anomaly-raw-metric,
+html[data-theme="light"] .app-content .log-toolbar input,
+html[data-theme="light"] .app-content .log-toolbar button,
+html[data-theme="light"] .app-content .copilot-composer-input,
+html[data-theme="light"] .theme-toggle,
+html[data-theme="light"] .sidebar-link {
+  border-width: 1.5px !important;
+}
+
+html[data-theme="light"] .app-content .fleet-server-card,
+html[data-theme="light"] .app-content .anomaly-list-item {
+  border-left-width: 3px !important;
+}
+
+html[data-theme="light"] .app-content .alert-card {
+  border-width: 1.5px !important;
+  border-left-width: 3px !important;
+}
+
+html[data-theme="light"] .app-content .card::before {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(42, 48, 58, .2), transparent);
+}
+
+html[data-theme="light"] .app-content .stat-card {
+  box-shadow:
+    0 0 0 1px rgba(42, 48, 58, .04),
+    0 5px 18px rgba(27, 39, 58, .055) !important;
+}
+
+html[data-theme="light"] .app-content .stat-card:not([data-highlight-stat="true"]) > div:first-child {
+  height: 2px !important;
+  background: linear-gradient(90deg, transparent, rgba(42, 48, 58, .24), transparent) !important;
+}
+
+html[data-theme="light"] .app-content .stat-card[data-highlight-stat="true"] > div:first-child {
+  height: 2px !important;
+  filter: brightness(1.3) saturate(1.2);
+}
+
+html[data-theme="light"] .app-content .stat-card[data-highlight-stat="true"][data-stat-variant="success"] {
+  border-color: rgba(42, 48, 58, .16) !important;
+}
+
+html[data-theme="light"] .app-content .stat-card[data-highlight-stat="true"][data-stat-variant="warning"] {
+  border-color: rgba(42, 48, 58, .16) !important;
+}
+
+html[data-theme="light"] .app-content .stat-card[data-highlight-stat="true"][data-stat-variant="purple"] {
+  border-color: rgba(42, 48, 58, .16) !important;
+}
+
+html[data-theme="light"] .sidebar-card,
+html[data-theme="light"] .topbar-card {
+  border-width: 1.5px !important;
+  border-color: #b2b8c1 !important;
+  box-shadow:
+    0 6px 18px rgba(27, 39, 58, .06),
+    inset 0 1px 0 rgba(255, 255, 255, .98) !important;
+}
+
+html[data-theme="light"] .sidebar-link.is-active {
+  border-color: #b8bdc5 !important;
+}
+
+html[data-theme="light"] .ui-chip {
+  border: 1.5px solid #b8bdc5 !important;
+  outline: none !important;
+}
+
+html[data-theme="light"] .ui-chip:hover {
+  border-color: rgba(42, 48, 58, .28) !important;
+}
+
+html[data-theme="light"] .app-content .alert-card,
+html[data-theme="light"] .app-content .anomaly-recommended-action,
+html[data-theme="light"] .app-content .anomaly-raw-metric,
+html[data-theme="light"] .app-content .log-toolbar input,
+html[data-theme="light"] .app-content .log-toolbar button,
+html[data-theme="light"] .app-content .copilot-composer-input {
+  border-color: #b8bdc5 !important;
+}
+
+/* Orbiting sky-blue accent appears only while the Copilot prompt is focused. */
+html[data-theme="light"] .copilot-composer-input {
+  position: relative;
+  isolation: isolate;
+  border-color: transparent !important;
+}
+
+html[data-theme="light"] .copilot-composer-input::before {
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  padding: 1.5px;
+  border-radius: 11px;
+  background: conic-gradient(
+    from var(--prompt-edge-angle),
+    transparent 0deg 245deg,
+    rgba(14, 165, 233, .28) 270deg,
+    #7dd3fc 300deg,
+    #38bdf8 325deg,
+    transparent 350deg
+  );
+  content: "";
+  opacity: .5;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: prompt-edge-orbit 5s linear infinite;
+}
+
+html[data-theme="light"] .copilot-composer-input:focus-within::before {
+  opacity: 1;
+  animation-duration: 3s;
+}
+
+html[data-theme="light"] .copilot-composer-input:hover::before {
+  opacity: .78;
+}
+
+html[data-theme="light"] .copilot-composer-input:focus-within {
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, .18), 0 0 16px rgba(14, 165, 233, .12);
+}
+
+html[data-theme="light"] .copilot-composer-input > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="light"] .copilot-composer-input::before {
+    animation: none !important;
+  }
+}

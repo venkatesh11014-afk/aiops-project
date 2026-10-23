@@ -1,43 +1,36 @@
 import { useState, useEffect } from "react";
-import { AreaChart, Area, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import {
+  AreaChart, Area, BarChart, Bar, LineChart, Line,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+} from "recharts";
 import { api } from "../utils/api";
-import LiquidGlass, { GlassStatCard, GlassPanel, GlassAlert } from "../components/LiquidGlass";
+import { StatCard, MetricRow, AlertCard, Panel, HealthRing, T } from "../components/UI";
 
-function SeverityBadge({ level }) {
-  const cfg = {
-    CRITICAL: { bg: "rgba(239,68,68,0.18)",  border: "rgba(239,68,68,0.45)",  color: "#fca5a5" },
-    HIGH:     { bg: "rgba(249,115,22,0.18)", border: "rgba(249,115,22,0.45)", color: "#fdba74" },
-    MEDIUM:   { bg: "rgba(245,158,11,0.18)", border: "rgba(245,158,11,0.45)", color: "#fcd34d" },
-    LOW:      { bg: "rgba(34,197,94,0.15)",  border: "rgba(34,197,94,0.4)",   color: "#86efac" },
-  };
-  const c = cfg[level] || cfg.LOW;
-  return (
-    <span style={{ padding: "2px 8px", borderRadius: 4, fontSize: 10, fontWeight: 700,
-      background: c.bg, border: `1px solid ${c.border}`, color: c.color,
-      letterSpacing: "0.05em", backdropFilter: "blur(8px)" }}>{level}</span>
-  );
-}
-
-const tooltipStyle = { contentStyle: { background: "rgba(5,10,26,0.92)", border: "1px solid rgba(100,160,255,0.25)", borderRadius: 10, backdropFilter: "blur(16px)", fontSize: 12 } };
+const CHART_TIP = {
+  contentStyle:{
+    background:"rgba(7,15,31,0.97)", border:"1px solid rgba(80,140,240,0.22)",
+    borderRadius:10, backdropFilter:"blur(16px)", fontSize:11,
+  }
+};
 
 export default function Dashboard() {
-  const [stats, setStats]     = useState(null);
+  const [stats,   setStats]   = useState(null);
   const [history, setHistory] = useState([]);
-  const [alerts, setAlerts]   = useState([]);
+  const [alerts,  setAlerts]  = useState([]);
   const [metrics, setMetrics] = useState(null);
-  const [fixing, setFixing]   = useState(null);
+  const [fixing,  setFixing]  = useState(null);
 
   const load = async () => {
     try {
-      const [s, h, a, m] = await Promise.all([
+      const [s,h,a,m] = await Promise.all([
         api.get("/stats"), api.get("/metrics/history?hours=3"),
         api.get("/alerts"), api.get("/metrics"),
       ]);
       setStats(s); setHistory(h); setAlerts(a); setMetrics(m);
-    } catch (e) { console.error(e); }
+    } catch {}
   };
 
-  useEffect(() => { load(); const t = setInterval(load, 5000); return () => clearInterval(t); }, []);
+  useEffect(() => { load(); const t = setInterval(load, 5000); return ()=>clearInterval(t); }, []);
 
   const handleFix = async (alert) => {
     setFixing(alert.id);
@@ -46,133 +39,147 @@ export default function Dashboard() {
   };
 
   const hs = stats?.health_score || 94;
-  const healthColor = hs > 90 ? "#22c55e" : hs > 75 ? "#f59e0b" : "#ef4444";
 
   return (
-    <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+    <div className="page-enter" style={{ display:"flex", flexDirection:"column", gap:18 }}>
 
       {/* ── Stat Row ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 14 }}>
-        <GlassStatCard label="Health Score"    value={hs}   unit="/100" icon="◎" color={healthColor} sub="Overall health" />
-        <GlassStatCard label="Logs Today"      value={((stats?.total_logs_today||0)/1000).toFixed(0)} unit="K" icon="≡" color="#5ca9ff" />
-        <GlassStatCard label="Auto-Fixed"      value={stats?.auto_fixed||0}       unit="issues" icon="⚡" color="#10b981" />
-        <GlassStatCard label="Threats Blocked" value={stats?.threats_blocked||0}  unit="today"  icon="🛡" color="#9b7bff" variant="purple" />
-        <GlassStatCard label="Revenue Saved"   value={`$${((stats?.revenue_saved||0)/1000).toFixed(0)}K`} icon="◈" color="#f59e0b" variant="warning" />
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:14 }}>
+        {/* Health Score — special ring card */}
+        <div className="card" style={{ padding:"18px 20px", display:"flex", alignItems:"center", gap:14 }}>
+          <HealthRing score={hs} size={72} />
+          <div>
+            <div style={{ fontFamily:"var(--font-display)", fontSize:12, fontWeight:700, color:T.textS,
+              textTransform:"uppercase", letterSpacing:"0.07em", marginBottom:4 }}>Health Score</div>
+            <div style={{ fontSize:10, color:T.textM }}>12 servers monitored</div>
+            <div style={{ marginTop:6, fontSize:10,
+              color: hs>90?T.green:hs>75?T.amber:T.red, fontWeight:600 }}>
+              {hs>90?"● Excellent":hs>75?"● Degraded":"● Critical"}
+            </div>
+          </div>
+        </div>
+
+        <StatCard label="Logs Today"     value={((stats?.total_logs_today||0)/1000).toFixed(0)} unit="K"
+          icon={<LogsIcon/>} color={T.blue} sub="Processed real-time" />
+        <StatCard label="Auto-Fixed"     value={stats?.auto_fixed||0}  unit="issues"
+          icon={<FixIcon/>}  color={T.green} sub="Zero human needed" variant="success" />
+        <StatCard label="Threats Blocked" value={stats?.threats_blocked||0} unit="today"
+          icon={<ShieldIcon/>} color={T.purpleB} sub="Security events" variant="purple" />
+        <StatCard label="Revenue Saved"  value={`$${((stats?.revenue_saved||0)/1000).toFixed(0)}K`}
+          icon={<CoinsIcon/>} color={T.amber} sub="Prevented downtime" variant="warning" />
       </div>
 
       {/* ── Charts Row ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14 }}>
-        <LiquidGlass intensity="strong" padding="20px" radius={14}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(200,220,255,0.7)", marginBottom: 14 }}>
-            CPU &amp; Memory — Last 3 Hours
-          </div>
-          <ResponsiveContainer width="100%" height={220}>
+      <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:14 }}>
+        {/* CPU / Memory area chart */}
+        <Panel title="CPU & Memory — Last 3 Hours" badge={<LiveBadgeMini />}>
+          <ResponsiveContainer width="100%" height={210}>
             <AreaChart data={history}>
               <defs>
-                <linearGradient id="cpu" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#3b82f6" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                <linearGradient id="gcpu" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#38bdf8" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#38bdf8" stopOpacity={0}/>
                 </linearGradient>
-                <linearGradient id="mem" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#8b5cf6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                <linearGradient id="gmem" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#7c3aed" stopOpacity={0.25}/>
+                  <stop offset="95%" stopColor="#7c3aed" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(80,120,200,0.12)" />
-              <XAxis dataKey="time" tick={{ fill: "#4a6fa5", fontSize: 10 }} tickLine={false} />
-              <YAxis tick={{ fill: "#4a6fa5", fontSize: 10 }} tickLine={false} domain={[0,100]} />
-              <Tooltip {...tooltipStyle} />
-              <Area type="monotone" dataKey="cpu"    stroke="#3b82f6" fill="url(#cpu)" strokeWidth={2} name="CPU %" />
-              <Area type="monotone" dataKey="memory" stroke="#8b5cf6" fill="url(#mem)" strokeWidth={2} name="Memory %" />
-              <Legend wrapperStyle={{ fontSize: 12, color: "#64748b" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(56,189,248,0.08)" />
+              <XAxis dataKey="time" tick={{fill:T.textM,fontSize:10}} tickLine={false} axisLine={false} />
+              <YAxis tick={{fill:T.textM,fontSize:10}} tickLine={false} axisLine={false} domain={[0,100]} />
+              <Tooltip {...CHART_TIP} />
+              <Area type="monotone" dataKey="cpu"    stroke="#38bdf8" fill="url(#gcpu)" strokeWidth={2}
+                name="CPU %" dot={false} />
+              <Area type="monotone" dataKey="memory" stroke="#7c3aed" fill="url(#gmem)" strokeWidth={2}
+                name="Memory %" dot={false} />
+              <Legend wrapperStyle={{fontSize:11,color:T.textS}} iconType="circle" iconSize={7} />
             </AreaChart>
           </ResponsiveContainer>
-        </LiquidGlass>
+        </Panel>
 
-        <LiquidGlass intensity="strong" padding="20px" radius={14}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(200,220,255,0.7)", marginBottom: 14 }}>Error Rate</div>
-          <ResponsiveContainer width="100%" height={220}>
+        {/* Error rate bars */}
+        <Panel title="Error Rate">
+          <ResponsiveContainer width="100%" height={210}>
             <BarChart data={history.slice(-20)}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(80,120,200,0.12)" />
-              <XAxis dataKey="time" tick={{ fill: "#4a6fa5", fontSize: 9 }} tickLine={false} interval={4} />
-              <YAxis tick={{ fill: "#4a6fa5", fontSize: 10 }} tickLine={false} />
-              <Tooltip {...tooltipStyle} />
-              <Bar dataKey="errors" fill="rgba(239,68,68,0.7)" radius={[3,3,0,0]} name="Errors" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(56,189,248,0.08)" />
+              <XAxis dataKey="time" tick={{fill:T.textM,fontSize:9}} tickLine={false} axisLine={false} interval={4} />
+              <YAxis tick={{fill:T.textM,fontSize:10}} tickLine={false} axisLine={false} />
+              <Tooltip {...CHART_TIP} />
+              <Bar dataKey="errors" fill="rgba(239,68,68,0.65)" radius={[3,3,0,0]} name="Errors"
+                style={{filter:"drop-shadow(0 0 4px rgba(239,68,68,0.5))"}} />
             </BarChart>
           </ResponsiveContainer>
-        </LiquidGlass>
+        </Panel>
       </div>
 
       {/* ── Live Metrics + Alerts ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 14 }}>
-        {/* Live Metrics */}
-        <LiquidGlass padding="20px" radius={14}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(200,220,255,0.7)", marginBottom: 16 }}>Live System Metrics</div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1.6fr", gap:14 }}>
+        {/* Live metrics */}
+        <Panel title="Live Metrics">
           {metrics && [
-            { label: "CPU Usage",    value: metrics.cpu,              color: "#3b82f6", unit: "%" },
-            { label: "Memory",       value: metrics.memory,           color: "#8b5cf6", unit: "%" },
-            { label: "Disk",         value: metrics.disk,             color: "#f59e0b", unit: "%" },
-            { label: "Network In",   value: metrics.network_in,       color: "#10b981", unit: " MB/s" },
-            { label: "Avg Response", value: metrics.avg_response_ms,  color: "#06b6d4", unit: " ms" },
-            { label: "Requests/sec", value: metrics.requests_per_sec, color: "#a78bfa", unit: "" },
-          ].map(m => (
-            <div key={m.label} style={{ marginBottom: 13 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{m.label}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: m.color }}>{typeof m.value === "number" ? m.value.toLocaleString() : m.value}{m.unit}</span>
-              </div>
-              {m.unit === "%" && (
-                <div style={{ height: 4, background: "rgba(255,255,255,0.07)", borderRadius: 2 }}>
-                  <div style={{ height:"100%", width:`${Math.min(100,m.value)}%`,
-                    background: m.value > 85 ? "#ef4444" : m.color, borderRadius: 2, transition: "width 0.5s" }} />
-                </div>
-              )}
-            </div>
-          ))}
-        </LiquidGlass>
+            { label:"CPU Usage",     value:metrics.cpu,              color:T.blue   },
+            { label:"Memory",        value:metrics.memory,           color:"#7c3aed"},
+            { label:"Disk Usage",    value:metrics.disk,             color:T.amber  },
+            { label:"Network In",    value:metrics.network_in,       color:T.green, unit:" MB/s" },
+            { label:"Avg Response",  value:metrics.avg_response_ms,  color:T.cyan,  unit:" ms", showBar:false },
+            { label:"Requests/sec",  value:metrics.requests_per_sec, color:T.purpleB, unit:"", showBar:false },
+          ].map(m => <MetricRow key={m.label} {...m} />)}
+        </Panel>
 
-        {/* Active Alerts */}
-        <LiquidGlass padding="20px" radius={14}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14, alignItems: "center" }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(200,220,255,0.7)" }}>Active Alerts</div>
-            <span style={{ fontSize: 10, padding: "2px 8px",
-              background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.35)",
-              color: "#f87171", borderRadius: 4 }}>{alerts.length} ACTIVE</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 280, overflowY: "auto" }}>
-            {alerts.map(alert => (
-              <GlassAlert
-                key={alert.id}
-                severity={alert.severity}
-                message={alert.message}
-                server={alert.server}
-                autoFixed={alert.auto_fixed}
-                onFix={() => handleFix(alert)}
-                fixing={fixing === alert.id}
-              />
+        {/* Alerts */}
+        <Panel
+          title="Active Alerts"
+          badge={
+            <span className="active-alert-count" style={{ fontSize:10, padding:"2px 8px",
+              background:T.redSoft||"rgba(239,68,68,0.12)",
+              border:"1px solid rgba(239,68,68,0.3)",
+              color:"#fca5a5", borderRadius:4, fontWeight:700 }}>
+              {alerts.length} ACTIVE
+            </span>
+          }
+        >
+          <div style={{ display:"flex", flexDirection:"column", gap:8, maxHeight:265, overflowY:"auto" }}>
+            {alerts.map(a => (
+              <AlertCard key={a.id} severity={a.severity} message={a.message}
+                server={a.server} autoFixed={a.auto_fixed}
+                onFix={() => handleFix(a)} fixing={fixing===a.id} />
             ))}
           </div>
-        </LiquidGlass>
+        </Panel>
       </div>
 
       {/* ── Response Time Chart ── */}
-      <LiquidGlass intensity="strong" padding="20px" radius={14}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(200,220,255,0.7)", marginBottom: 14 }}>
-          Response Time &amp; Request Volume
-        </div>
-        <ResponsiveContainer width="100%" height={170}>
+      <Panel title="Response Time & Throughput">
+        <ResponsiveContainer width="100%" height={160}>
           <LineChart data={history}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(80,120,200,0.12)" />
-            <XAxis dataKey="time" tick={{ fill: "#4a6fa5", fontSize: 10 }} tickLine={false} interval={5} />
-            <YAxis yAxisId="l" tick={{ fill: "#4a6fa5", fontSize: 10 }} tickLine={false} />
-            <YAxis yAxisId="r" orientation="right" tick={{ fill: "#4a6fa5", fontSize: 10 }} tickLine={false} />
-            <Tooltip {...tooltipStyle} />
-            <Line yAxisId="l" type="monotone" dataKey="response_ms" stroke="#f59e0b" strokeWidth={2} dot={false} name="Response (ms)" />
-            <Line yAxisId="r" type="monotone" dataKey="requests"    stroke="#10b981" strokeWidth={2} dot={false} name="Requests/min" />
-            <Legend wrapperStyle={{ fontSize: 12, color: "#64748b" }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(56,189,248,0.08)" />
+            <XAxis dataKey="time" tick={{fill:T.textM,fontSize:10}} tickLine={false} axisLine={false} interval={5} />
+            <YAxis yAxisId="l" tick={{fill:T.textM,fontSize:10}} tickLine={false} axisLine={false} />
+            <YAxis yAxisId="r" orientation="right" tick={{fill:T.textM,fontSize:10}} tickLine={false} axisLine={false} />
+            <Tooltip {...CHART_TIP} />
+            <Line yAxisId="l" type="monotone" dataKey="response_ms" stroke={T.amber}  strokeWidth={2} dot={false} name="Response (ms)" />
+            <Line yAxisId="r" type="monotone" dataKey="requests"    stroke={T.green}  strokeWidth={2} dot={false} name="Requests/min" />
+            <Legend wrapperStyle={{fontSize:11,color:T.textS}} iconType="circle" iconSize={7} />
           </LineChart>
         </ResponsiveContainer>
-      </LiquidGlass>
+      </Panel>
     </div>
   );
 }
+
+function LiveBadgeMini() {
+  return (
+    <div className="dashboard-live-badge" style={{ display:"flex", alignItems:"center", gap:5 }}>
+      <span style={{ width:6, height:6, borderRadius:"50%", background:T.blue,
+        display:"inline-block", animation:"livePulse 2s infinite", boxShadow:`0 0 6px ${T.blue}` }} />
+      <span className="dashboard-live-label" style={{ fontSize:9, color:T.blue, fontWeight:700, letterSpacing:"0.08em" }}>LIVE</span>
+    </div>
+  );
+}
+
+// Inline SVG icons (no deps)
+const LogsIcon   = () => <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><rect x="2" y="4" width="14" height="1.5" rx=".75" fill="currentColor"/><rect x="2" y="8" width="10" height="1.5" rx=".75" fill="currentColor" opacity=".6"/><rect x="2" y="12" width="7" height="1.5" rx=".75" fill="currentColor" opacity=".35"/></svg>;
+const FixIcon    = () => <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M9 2L16 14H2L9 2Z" stroke="currentColor" strokeWidth="1.5" fill="none"/><path d="M9 7v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><circle cx="9" cy="12" r="1" fill="currentColor"/></svg>;
+const ShieldIcon = () => <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M9 2L15 5v5c0 3.5-3 5.5-6 7C6 15.5 3 13.5 3 10V5L9 2Z" stroke="currentColor" strokeWidth="1.5" fill="none"/><path d="M6 9l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const CoinsIcon  = () => <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.5"/><path d="M9 6v1.5M9 10.5V12M7.5 8.5h2a.5.5 0 010 1h-1a.5.5 0 000 1H10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>;

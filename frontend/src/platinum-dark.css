@@ -1,0 +1,193 @@
+/* ═══════════════════════════════════════════════════════════
+   PLATINUM EDGE — DARK MODE ONLY
+   Replaces every sky-blue edge (borders, top accent lines,
+   glows, orbiting input rings, active-tab edges) with a
+   brushed platinum finish. Light theme is untouched.
+   Import AFTER index.css and minimalist-white.css.
+═══════════════════════════════════════════════════════════ */
+
+@property --plat-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+/* ── 1. Tokens: every var(--border-*) now resolves to platinum ── */
+html:not([data-theme="light"]) {
+  --plat-hi:   #f6f8fb;
+  --plat-mid:  #b9c1cb;
+  --plat-lo:   #6b737c;
+  --plat-edge: rgba(196, 204, 214, .44);
+  --plat-edge-hover: rgba(226, 232, 240, .78);
+
+  --border-subtle:  rgba(190, 198, 208, .14);
+  --border-default: rgba(198, 206, 216, .30);
+  --border-strong:  rgba(214, 221, 230, .52);
+  --border-focus:   rgba(238, 242, 247, .80);
+
+  --plat-ring: conic-gradient(from var(--plat-a),
+    #fdfdfe 0deg, #8b939c 28deg, #e2e7ed 60deg, #4a5058 96deg,
+    #c9d0d8 126deg, #ffffff 156deg, #6a727b 192deg, #3a4047 222deg,
+    #aeb6bf 252deg, #f4f6f9 282deg, #7a828b 316deg, #d5dbe2 342deg, #fdfdfe 360deg);
+  --plat-line: linear-gradient(90deg, transparent, rgba(255,255,255,.9), rgba(158,168,181,.65), rgba(255,255,255,.9), transparent);
+  --plat-bevel: inset 0 1px 0 rgba(255,255,255,.20), inset 0 -1px 0 rgba(0,0,0,.55);
+}
+
+/* ── 2. Panels, cards and toolbars: platinum border + bevel + soft glow ── */
+html:not([data-theme="light"]) .app-content .card,
+html:not([data-theme="light"]) .app-content .stat-card,
+html:not([data-theme="light"]) .app-content .fleet-server-card,
+html:not([data-theme="light"]) .app-content .fleet-detail-card,
+html:not([data-theme="light"]) .app-content .anomaly-list-item,
+html:not([data-theme="light"]) .app-content .anomaly-detail-card,
+html:not([data-theme="light"]) .app-content .anomaly-filters,
+html:not([data-theme="light"]) .app-content .log-toolbar,
+html:not([data-theme="light"]) .app-content .log-stream,
+html:not([data-theme="light"]) .app-content .copilot-header,
+html:not([data-theme="light"]) .app-content .copilot-messages,
+html:not([data-theme="light"]) .app-content .copilot-suggestions,
+html:not([data-theme="light"]) .app-content .copilot-composer,
+html:not([data-theme="light"]) .app-content .fleet-inspector {
+  border-color: var(--plat-edge) !important;
+  border-width: 1.5px !important;
+  box-shadow:
+    var(--plat-bevel),
+    0 0 0 1px rgba(255, 255, 255, .025),
+    0 0 14px rgba(196, 206, 220, .07),
+    0 10px 26px rgba(0, 0, 0, .32);
+}
+
+html:not([data-theme="light"]) .app-content .card:hover,
+html:not([data-theme="light"]) .app-content .stat-card:hover,
+html:not([data-theme="light"]) .app-content .fleet-server-card:hover,
+html:not([data-theme="light"]) .app-content .anomaly-list-item:hover {
+  border-color: var(--plat-edge-hover) !important;
+  box-shadow:
+    var(--plat-bevel),
+    0 0 0 1px rgba(255, 255, 255, .05),
+    0 0 22px rgba(210, 220, 235, .16),
+    0 12px 28px rgba(0, 0, 0, .36);
+}
+
+/* Top accent line on every card: platinum sheen instead of sky blue */
+html:not([data-theme="light"]) .app-content .card::before {
+  height: 2px;
+  background: var(--plat-line);
+}
+html:not([data-theme="light"]) .app-content .stat-card:not([data-highlight-stat="true"]) > div:first-child {
+  height: 2px !important;
+  background: var(--plat-line) !important;
+}
+
+/* Status-coloured selected server cards keep their green/amber/red edge (index.css) */
+
+/* ── 3. Sidebar + top bar: full metallic ring, slow light drift ── */
+html:not([data-theme="light"]) .sidebar-card,
+html:not([data-theme="light"]) .topbar-card {
+  border-color: rgba(200, 208, 218, .5) !important;
+  box-shadow:
+    var(--plat-bevel),
+    0 0 2px rgba(255, 255, 255, .35),
+    0 0 18px rgba(200, 212, 228, .16),
+    0 16px 38px rgba(0, 0, 0, .4);
+}
+html:not([data-theme="light"]) .sidebar-card { border-right: 1.5px solid rgba(200, 208, 218, .5) !important; }
+
+html:not([data-theme="light"]) .sidebar-card::after,
+html:not([data-theme="light"]) .topbar-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  padding: 2px;
+  border-radius: inherit;
+  background: var(--plat-ring);
+  opacity: .9;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: plat-spin 14s linear infinite;
+}
+@keyframes plat-spin { to { --plat-a: 360deg; } }
+
+/* ── 4. Sidebar tabs ── */
+html:not([data-theme="light"]) .sidebar-link:hover {
+  border-color: rgba(214, 221, 230, .32);
+}
+html:not([data-theme="light"]) .sidebar-link {
+  border: 1px solid rgba(196, 204, 214, .28) !important;
+}
+html:not([data-theme="light"]) .sidebar-link.is-active:not(.is-ai) {
+  border: 2px solid rgba(226, 232, 240, .78) !important;
+  border-left: 3px solid #eef1f5 !important;
+  background: linear-gradient(100deg, rgba(226, 231, 238, .17), rgba(226, 231, 238, .04)) !important;
+  color: #f1f4f8 !important;
+  box-shadow: var(--plat-bevel), 0 0 16px rgba(210, 220, 235, .14);
+}
+html:not([data-theme="light"]) .sidebar-link.is-active.is-ai {
+  border: 2px solid rgba(226, 232, 240, .68) !important;
+  color: #f1f4f8 !important;
+  background: linear-gradient(100deg, rgba(226, 231, 238, .17), rgba(226, 231, 238, .04)) !important;
+  box-shadow: var(--plat-bevel), 0 0 16px rgba(210, 220, 235, .14);
+}
+
+/* Anomaly headings are neutral; severity badges and metrics retain their status colors. */
+html:not([data-theme="light"]) .anomaly-issue-title,
+html:not([data-theme="light"]) .anomaly-confidence {
+  color: #f1f4f8 !important;
+}
+html:not([data-theme="light"]) .anomaly-apply-fix {
+  background: linear-gradient(135deg, #f4f6f8 0%, #b9c1cb 48%, #e8ecf1 100%) !important;
+  color: #111418 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .8),
+    0 4px 16px rgba(196, 206, 220, .2) !important;
+}
+
+/* ── 5. Small controls: chips, icon buttons, badges, header bits ── */
+html:not([data-theme="light"]) .ui-chip {
+  border: 1px solid var(--plat-edge) !important;
+  box-shadow: var(--plat-bevel);
+}
+html:not([data-theme="light"]) .ui-chip:hover {
+  border-color: var(--plat-edge-hover) !important;
+}
+html:not([data-theme="light"]) .ui-icon-btn,
+html:not([data-theme="light"]) .live-badge {
+  border-color: var(--plat-edge) !important;
+  outline-color: var(--plat-edge) !important;
+}
+html:not([data-theme="light"]) .log-level-chip {
+  border-color: rgba(214, 221, 230, .5) !important;
+  box-shadow: var(--plat-bevel), 0 0 8px rgba(210, 220, 235, .2) !important;
+}
+html:not([data-theme="light"]) .alert-card-action:not(:disabled) {
+  border-color: var(--plat-edge-hover) !important;
+}
+html:not([data-theme="light"]) .topbar-clock,
+html:not([data-theme="light"]) .topbar-avatar,
+html:not([data-theme="light"]) .theme-toggle {
+  border-color: var(--plat-edge) !important;
+}
+html:not([data-theme="light"]) :focus-visible {
+  outline-color: #e6eaf0;
+}
+
+/* ── 6. Prompt + search inputs: orbiting ring goes platinum ── */
+html:not([data-theme="light"]) .copilot-composer-input::before,
+html:not([data-theme="light"]) .log-search-input::before {
+  background: conic-gradient(
+    from var(--prompt-edge-angle),
+    transparent 0deg 225deg,
+    rgba(185, 193, 203, .35) 252deg,
+    #ffffff 292deg,
+    #c9d0d8 322deg,
+    transparent 350deg
+  );
+}
+html:not([data-theme="light"]) .copilot-composer-input:focus-within {
+  box-shadow: 0 0 0 1px rgba(226, 232, 240, .22), 0 0 18px rgba(210, 220, 235, .16);
+}
+
+/* ── 7. Motion safety ── */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-theme="light"]) .sidebar-card::after,
+  html:not([data-theme="light"]) .topbar-card::after { animation: none; }
+}

@@ -1,158 +1,191 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../utils/api";
-import LiquidGlass, { GlassPanel, GlassStatCard, GlassAlert } from "../components/LiquidGlass";
+import { LogRow, SearchInput, Chip, T } from "../components/UI";
 
+// Define our "Lightning Blue" and bright text colors
+const LIGHTNING_BLUE = "#38bdf8"; // Sky-400
+const GLOW_BLUE = "rgba(56, 189, 248, 0.4)";
+const BRIGHT_TEXT = "#f1f5f9";    // Slate-100 (Very sharp)
+const MID_TEXT = "#cbd5e1";       // Slate-300 (Bright secondary)
 
-const LEVEL_CFG = {
-  INFO:     { color: "#60a5fa", bg: "#0d1729", border: "#1a2d4a" },
-  WARN:     { color: "#fbbf24", bg: "#1a1400", border: "#78490f" },
-  ERROR:    { color: "#f87171", bg: "#1a0a0a", border: "#7f1d1d" },
-  CRITICAL: { color: "#ff4d4d", bg: "#200000", border: "#9b1c1c" },
-};
+const LEVELS = ["ALL", "INFO", "WARN", "ERROR", "CRITICAL"];
 
 export default function LogExplorer() {
   const [logs, setLogs] = useState([]);
   const [query, setQuery] = useState("");
-  const [level, setLevel] = useState("all");
+  const [level, setLevel] = useState("ALL");
   const [live, setLive] = useState(true);
   const [loading, setLoading] = useState(false);
-  const bottomRef = useRef(null);
 
   const loadLive = async () => {
     if (!live) return;
-    const data = await api.get("/logs/live?count=5");
-    setLogs(prev => [...data, ...prev].slice(0, 200));
-    if (bottomRef.current && live) {
-      // don't auto-scroll if live mode; let user read
+    try {
+      const data = await api.get("/logs/live?count=6");
+      setLogs(prev => [...data, ...prev].slice(0, 300));
+    } catch (e) { console.error(e); }
+  };
+
+  const search = async (selectedLevel = level) => {
+    setLoading(true); setLive(false);
+    try {
+      const data = await api.post("/logs/search", {
+        query,
+        level: selectedLevel === "ALL" ? "all" : selectedLevel,
+      });
+      setLogs(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const search = async () => {
-    setLoading(true);
-    setLive(false);
-    const data = await api.post("/logs/search", { query, level });
-    setLogs(data);
-    setLoading(false);
-  };
+  const resumeLive = () => { setQuery(""); setLevel("ALL"); setLogs([]); setLive(true); };
 
   useEffect(() => {
     loadLive();
-    if (live) {
-      const t = setInterval(loadLive, 2000);
-      return () => clearInterval(t);
-    }
+    if (live) { const t = setInterval(loadLive, 1800); return () => clearInterval(t); }
   }, [live]);
 
-  const clearAndResume = () => {
-    setQuery("");
-    setLevel("all");
-    setLogs([]);
-    setLive(true);
+  const counts = {
+    total: logs.length,
+    CRITICAL: logs.filter(l => l.level === "CRITICAL").length,
+    ERROR: logs.filter(l => l.level === "ERROR").length,
+    WARN: logs.filter(l => l.level === "WARN").length,
+    INFO: logs.filter(l => l.level === "INFO").length,
+  };
+
+  // Helper for Tab/Chip styling
+  const getChipStyle = (l) => {
+    const isActive = level === l;
+    return {
+      padding: "6px 12px",
+      fontSize: 11,
+      fontFamily: "var(--font-body)",
+      fontWeight: isActive ? 700 : 500,
+      background: isActive ? "rgba(56, 189, 248, 0.1)" : "rgba(255,255,255,0.03)",
+      color: isActive ? LIGHTNING_BLUE : MID_TEXT,
+      border: `1px solid ${isActive ? LIGHTNING_BLUE : "rgba(255,255,255,0.1)"}`,
+      borderRadius: 6,
+      cursor: "pointer",
+      transition: "all 0.2s",
+      boxShadow: isActive ? `0 0 8px ${GLOW_BLUE}, inset 0 0 4px rgba(56, 189, 248, 0.2)` : "none",
+      textShadow: isActive ? `0 0 4px ${GLOW_BLUE}` : "none"
+    };
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, height: "calc(100vh - 120px)" }}>
-      {/* Search Bar */}
-      <div style={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12, padding: 16 }}>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <div style={{ flex: 1, display: "flex", gap: 0, background: "transparent", border: "1px solid #1a2d4a", borderRadius: 8, overflow: "hidden" }}>
-            <span style={{ padding: "0 12px", display: "flex", alignItems: "center", color: "#4a6fa5", fontSize: 16 }}>⌕</span>
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && search()}
-              placeholder="Search logs... (server, service, message, IP)"
-              style={{
-                flex: 1, background: "transparent", border: "none", outline: "none",
-                color: "#e2e8f0", fontSize: 13, padding: "10px 0",
-              }}
-            />
+    <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: 14, height: "calc(100vh - 120px)" }}>
+
+      {/* ── Toolbar ── */}
+      <div className="log-toolbar" style={{
+        background: "rgba(15, 23, 42, 0.6)", // Darker glass
+        backdropFilter: "blur(12px)",
+        border: `1px solid rgba(255,255,255,0.08)`,
+        borderRadius: 12,
+        padding: "14px 16px"
+      }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
+          <SearchInput value={query} onChange={setQuery} onEnter={search}
+            placeholder="Search server, service, message, IP address…" />
+
+          {/* Level pills */}
+          <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+            {LEVELS.map(l => (
+              <button
+                key={l}
+                type="button"
+                className="log-level-chip"
+                aria-pressed={level === l}
+                disabled={loading}
+                onClick={() => {
+                  setLevel(l);
+                  search(l);
+                }}
+                style={getChipStyle(l)}
+              >
+                {l}
+              </button>
+            ))}
           </div>
-          <select value={level} onChange={e => setLevel(e.target.value)} style={{
-            background: "transparent", border: "1px solid #1a2d4a", color: "#94a3b8",
-            padding: "10px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer",
-          }}>
-            <option value="all">All Levels</option>
-            <option value="INFO">INFO</option>
-            <option value="WARN">WARN</option>
-            <option value="ERROR">ERROR</option>
-            <option value="CRITICAL">CRITICAL</option>
-          </select>
+
           <button onClick={search} style={{
-            padding: "10px 20px", background: "#1d4ed8", color: "white",
-            border: "none", borderRadius: 8, cursor: "pointer", fontSize: 13, fontWeight: 600,
+            padding: "8px 16px", fontSize: 11, fontWeight: 700, letterSpacing: "0.05em",
+            background: "rgba(56, 189, 248, 0.1)", color: LIGHTNING_BLUE,
+            border: `1px solid ${LIGHTNING_BLUE}`, borderRadius: 6, cursor: "pointer",
+            flexShrink: 0, transition: "all 0.2s",
+            boxShadow: `0 0 8px ${GLOW_BLUE}`,
+            textTransform: "uppercase"
           }}>Search</button>
-          <button onClick={clearAndResume} style={{
-            padding: "10px 16px", background: live ? "#0d1f0d" : "#1a2d4a",
-            color: live ? "#22c55e" : "#64748b",
-            border: `1px solid ${live ? "#1a4a1a" : "#2a3f5f"}`, borderRadius: 8, cursor: "pointer", fontSize: 12,
+
+          {/* Live toggle */}
+          <button onClick={live ? undefined : resumeLive} style={{
+            padding: "8px 14px", fontSize: 11, fontWeight: 700, flexShrink: 0, letterSpacing: "0.05em",
+            background: live ? "rgba(16, 185, 129, 0.1)" : "rgba(255,255,255,0.04)",
+            color: live ? "#34d399" : MID_TEXT,
+            border: `1px solid ${live ? "#10b981" : "rgba(255,255,255,0.1)"}`,
+            borderRadius: 6, cursor: live ? "default" : "pointer",
+            display: "flex", alignItems: "center", gap: 6,
+            boxShadow: live ? "0 0 8px rgba(16, 185, 129, 0.3)" : "none",
+            textTransform: "uppercase"
           }}>
-            {live ? "● LIVE" : "▶ Resume Live"}
+            <span style={{
+              width: 6, height: 6, borderRadius: "50%", background: live ? "#34d399" : MID_TEXT,
+              display: "inline-block", animation: live ? "livePulse 2s infinite" : "none",
+              boxShadow: live ? "0 0 6px #10b981" : "none"
+            }} />
+            {live ? "LIVE" : "▶ Resume"}
           </button>
         </div>
 
-        <div style={{ display: "flex", gap: 16, marginTop: 10 }}>
+        {/* Stat counters - Made text much brighter */}
+        <div style={{ display: "flex", gap: 20, borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 10 }}>
           {[
-            { label: "Total Logs", value: logs.length },
-            { label: "CRITICAL", value: logs.filter(l => l.level === "CRITICAL").length, color: "#ef4444" },
-            { label: "ERROR", value: logs.filter(l => l.level === "ERROR").length, color: "#f87171" },
-            { label: "WARN", value: logs.filter(l => l.level === "WARN").length, color: "#fbbf24" },
-            { label: "INFO", value: logs.filter(l => l.level === "INFO").length, color: "#60a5fa" },
+            { l: "TOTAL", v: counts.total, c: BRIGHT_TEXT },
+            { l: "CRITICAL", v: counts.CRITICAL, c: "#fca5a5" },
+            { l: "ERROR", v: counts.ERROR, c: "#f87171" },
+            { l: "WARN", v: counts.WARN, c: "#fde68a" },
+            { l: "INFO", v: counts.INFO, c: "#93c5fd" },
           ].map(s => (
-            <div key={s.label} style={{ fontSize: 11 }}>
-              <span style={{ color: "#4a6fa5" }}>{s.label}: </span>
-              <span style={{ color: s.color || "#94a3b8", fontWeight: 700 }}>{s.value}</span>
+            <div key={s.l} style={{ fontSize: 11, display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ color: MID_TEXT, fontWeight: 600, letterSpacing: "0.05em" }}>{s.l}:</span>
+              <span style={{ color: s.c, fontWeight: 700, fontFamily: "var(--font-mono)", fontSize: 12 }}>{s.v}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Log Stream */}
-      <div style={{
-        flex: 1, background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12,
-        overflow: "auto", fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+      {/* ── Log stream ── */}
+      <div className="log-stream" style={{
+        flex: 1, background: "#020617", // Very dark slate
+        border: `1px solid rgba(255,255,255,0.08)`,
+        borderRadius: 12, overflow: "hidden",
+        display: "flex", flexDirection: "column",
+        boxShadow: "inset 0 2px 10px rgba(0,0,0,0.5)"
       }}>
+        {/* Stream header - Brighter text */}
         <div style={{
-          position: "sticky", top: 0, background: "transparent", borderBottom: "1px solid #1a2d4a",
-          padding: "8px 16px", display: "flex", gap: 24, fontSize: 10, color: "#4a6fa5",
+          display: "grid",
+          gridTemplateColumns: "140px 68px 150px 120px 1fr",
+          padding: "10px 14px",
+          background: "rgba(30, 41, 59, 0.5)",
+          borderBottom: `1px solid rgba(255,255,255,0.08)`,
+          fontSize: 10, color: LIGHTNING_BLUE, letterSpacing: "0.1em",
+          fontWeight: 700, textTransform: "uppercase",
+          fontFamily: "var(--font-mono)",
+          flexShrink: 0,
         }}>
-          <span style={{ width: 160 }}>TIMESTAMP</span>
-          <span style={{ width: 60 }}>LEVEL</span>
-          <span style={{ width: 160 }}>SERVER</span>
-          <span style={{ width: 120 }}>SERVICE</span>
-          <span>MESSAGE</span>
+          <span>Timestamp</span>
+          <span>Level</span>
+          <span>Server</span>
+          <span>Service</span>
+          <span>Message</span>
         </div>
 
-        {loading && <div style={{ padding: 20, color: "#4a6fa5", textAlign: "center" }}>Searching...</div>}
-
-        {logs.map((log, i) => {
-          const cfg = LEVEL_CFG[log.level] || LEVEL_CFG.INFO;
-          return (
-            <div key={log.id || i} style={{
-              padding: "6px 16px", display: "flex", gap: 24, alignItems: "center",
-              borderBottom: "1px solid #0d1520", fontSize: 11,
-              background: log.level === "CRITICAL" ? "#120000" : log.level === "ERROR" ? "#0f0000" : "transparent",
-              transition: "background 0.2s",
-            }}>
-              <span style={{ width: 160, color: "#2a3f5f", flexShrink: 0 }}>
-                {new Date(log.timestamp).toLocaleTimeString()}
-              </span>
-              <span style={{
-                width: 60, flexShrink: 0, padding: "1px 6px", borderRadius: 3,
-                background: cfg.bg, border: `1px solid ${cfg.border}`,
-                color: cfg.color, fontSize: 9, fontWeight: 700, textAlign: "center",
-              }}>{log.level}</span>
-              <span style={{ width: 160, color: "#4a6fa5", flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {log.server}
-              </span>
-              <span style={{ width: 120, color: "#3d5a80", flexShrink: 0 }}>{log.service}</span>
-              <span style={{ color: cfg.color === "#60a5fa" ? "#94a3b8" : cfg.color, flex: 1 }}>
-                {log.message}
-              </span>
-            </div>
-          );
-        })}
-        <div ref={bottomRef} />
+        <div style={{ flex: 1, overflowY: "auto" }}>
+          {loading && <div style={{ padding: 20, color: LIGHTNING_BLUE, textAlign: "center", fontFamily: "var(--font-mono)" }}>Searching…</div>}
+          {logs.map((log, i) => <LogRow key={log.id || i} log={log} />)}
+        </div>
       </div>
     </div>
   );

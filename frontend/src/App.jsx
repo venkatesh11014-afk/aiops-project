@@ -1,114 +1,93 @@
-import { useState } from "react";
-import Dashboard from "./pages/Dashboard";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import "./index.css";
+import "./minimalist-white.css";
+import "./platinum-dark.css";
+import Login from "./pages/Login";
+import MicroSlats from "./components/MicroSlats";
+import Sidebar  from "./components/Sidebar";
+import TopBar   from "./components/TopBar";
+import Dashboard   from "./pages/Dashboard";
+import Anomalies   from "./pages/Anomalies";
 import LogExplorer from "./pages/LogExplorer";
-import Anomalies from "./pages/Anomalies";
-import Servers from "./pages/Servers";
-import Copilot from "./pages/Copilot";
-import Sidebar from "./components/Sidebar";
-import TopBar from "./components/TopBar";
-import Grainient from "./components/backgrounds/Grainient";
-export default function App() {
-  const [page, setPage] = useState("dashboard");
+import Servers     from "./pages/Servers";
+import Copilot     from "./pages/Copilot";
 
-  const pages = {
-    dashboard: <Dashboard />,
-    logs: <LogExplorer />,
-    anomalies: <Anomalies />,
-    servers: <Servers />,
-    copilot: <Copilot />,
-  };
+const PAGES = {
+  dashboard: <Dashboard />,
+  anomalies: <Anomalies />,
+  logs:      <LogExplorer />,
+  servers:   <Servers />,
+  copilot:   <Copilot />,
+};
+
+export default function App() {
+  const reduceMotion = useReducedMotion();
+  const [page, setPage] = useState("dashboard");
+  const [authenticated, setAuthenticated] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    try {
+      return window.localStorage.getItem("aiops-theme") === "light" ? "light" : "dark";
+    } catch (error) {
+      console.warn("Unable to read the saved theme preference.", error);
+      return "dark";
+    }
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try {
+      window.localStorage.setItem("aiops-theme", theme);
+    } catch (error) {
+      console.warn("Unable to save the theme preference.", error);
+    }
+  }, [theme]);
 
   return (
-    <>
-      {/* Grainient background */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 0,
-          overflow: "hidden",
-        }}
-      >
-        <Grainient
-    color1="#000000"
-    color2="#0b1be1"
-    color3="#000000"
-    timeSpeed={0.2}
-    colorBalance={0.03}
-    warpStrength={0}
-    warpFrequency={5.6}
-    warpSpeed={0.6}
-    warpAmplitude={14}
-    blendAngle={130}
-    blendSoftness={0}
-    rotationAmount={870}
-    noiseScale={2}
-    grainAmount={0}
-    grainScale={0.2}
-    grainAnimated={false}
-    contrast={1.05}
-    gamma={1}
-    saturation={1}
-    centerX={0}
-    centerY={0}
-    zoom={0.9}
-  />
-</div>
-
-Collapse Snippet
-
-
-      {/* Scan line */}
-      <div
-        className="scan-line-overlay"
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 1,
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Application */}
-      <div
-        className="app-shell"
-        style={{
-          position: "relative",
-          zIndex: 2,
-
-          display: "flex",
-          height: "100vh",
-
-          color: "#e2e8f0",
-          fontFamily: "'Inter', system-ui, sans-serif",
-
-          overflow: "hidden",
-        }}
-      >
-        <Sidebar page={page} setPage={setPage} />
-
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
+    <AnimatePresence mode="wait" initial={false}>
+      {!authenticated ? (
+        <motion.div
+          key="login"
+          initial={reduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: reduceMotion ? 0 : 0.2 } }}
         >
-          <TopBar page={page} />
-
-          <main
-            className="app-main"
-            style={{
-              flex: 1,
-              overflow: "auto",
-              padding: "24px",
-            }}
-          >
-            {pages[page]}
-          </main>
-        </div>
-      </div>
-    </>
+          <Login onLogin={() => setAuthenticated(true)} />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="dashboard"
+          initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="scan-overlay" />
+          <div className="app-frame">
+            <MicroSlats
+              className="app-microslats-background"
+              color={theme === "light" ? "#252a31" : "#c7cbd1"}
+              glintColor={theme === "light" ? "#656c75" : "#ffffff"}
+              backgroundColor="rgba(0, 0, 0, 0)"
+              slatWidth={10}
+              slatHeight={24}
+              gap={4}
+              speed={0.25}
+              glint={0.12}
+              contrast={0.8}
+              fog={0.8}
+              interactive={false}
+              intro={false}
+            />
+            <Sidebar page={page} setPage={setPage} />
+            <div className="app-workspace">
+              <TopBar page={page} theme={theme} onThemeToggle={() => setTheme(current => current === "dark" ? "light" : "dark")} />
+              <main className="app-content">
+                {PAGES[page]}
+              </main>
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

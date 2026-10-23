@@ -1,233 +1,216 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { staggerContainer, staggerChild, cardVariants } from "../motion";
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { api } from "../utils/api";
-import LiquidGlass, { GlassPanel, GlassStatCard, GlassAlert } from "../components/LiquidGlass";
+import { SeverityBadge, Panel, PrimaryBtn, T } from "../components/UI";
 
-
-const SEVERITY_CONFIG = {
-  CRITICAL: { color: "#ef4444", bg: "#1a0a0a", border: "#7f1d1d", icon: "🔴" },
-  HIGH: { color: "#f97316", bg: "#1a0e00", border: "#7c3a00", icon: "🟠" },
-  MEDIUM: { color: "#f59e0b", bg: "#1a1400", border: "#78490f", icon: "🟡" },
-  LOW: { color: "#22c55e", bg: "#0a1500", border: "#1a4a1a", icon: "🟢" },
+const SEV_CFG = {
+  CRITICAL:{ color:"#ef4444", border:"rgba(239,68,68,0.35)", icon:"🔴" },
+  HIGH:    { color:"#f97316", border:"rgba(249,115,22,0.3)", icon:"🟠" },
+  MEDIUM:  { color:"#f59e0b", border:"rgba(245,158,11,0.28)",icon:"🟡" },
+  LOW:     { color:"#10b981", border:"rgba(16,185,129,0.28)",icon:"🟢" },
 };
-
-const ISSUE_ICONS = {
-  MEMORY_LEAK: "💾",
-  CPU_SPIKE: "⚡",
-  DISK_FULL: "💿",
-  SECURITY_ATTACK: "🛡️",
-  PERFORMANCE_DEGRADATION: "🐢",
-  APPLICATION_ERROR: "💥",
-  UNKNOWN_ANOMALY: "❓",
+const ISSUE_ICON = {
+  MEMORY_LEAK:"💾", CPU_SPIKE:"⚡", DISK_FULL:"💿",
+  SECURITY_ATTACK:"🛡️", PERFORMANCE_DEGRADATION:"🐢",
+  APPLICATION_ERROR:"💥", UNKNOWN_ANOMALY:"❓",
 };
 
 export default function Anomalies() {
   const [anomalies, setAnomalies] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [fixing, setFixing] = useState(null);
+  const [selected,  setSelected]  = useState(null);
+  const [fixing,    setFixing]    = useState(false);
   const [fixResult, setFixResult] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("ALL");
+  const [filter,    setFilter]    = useState("ALL");
+  const [loading,   setLoading]   = useState(true);
 
   const load = async () => {
-    try {
-      const data = await api.get("/anomalies");
-      setAnomalies(data);
-      if (data.length > 0 && !selected) setSelected(data[0]);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
+    try { const d=await api.get("/anomalies"); setAnomalies(d); if(d.length&&!selected)setSelected(d[0]); }
+    catch{} finally{setLoading(false);}
   };
 
-  useEffect(() => { load(); const t = setInterval(load, 8000); return () => clearInterval(t); }, []);
+  useEffect(() => { load(); const t=setInterval(load,8000); return()=>clearInterval(t); }, []);
 
-  const handleFix = async (anomaly) => {
-    setFixing(anomaly.id);
-    setFixResult(null);
-    const result = await api.post("/remediate", { issue_type: anomaly.issue_type });
-    setFixResult(result);
-    setFixing(null);
+  const handleFix = async () => {
+    if (!selected) return;
+    setFixing(true); setFixResult(null);
+    const r = await api.post("/remediate",{issue_type:selected.issue_type});
+    setFixResult(r); setFixing(false);
   };
 
-  const filtered = filter === "ALL" ? anomalies : anomalies.filter(a => a.severity === filter);
-  const sc = selected ? SEVERITY_CONFIG[selected.severity] || SEVERITY_CONFIG.LOW : null;
+  const filtered = filter==="ALL" ? anomalies : anomalies.filter(a=>a.severity===filter);
+  const sel = selected;
+  const sc  = sel ? SEV_CFG[sel.severity]||SEV_CFG.LOW : null;
 
-  const radarData = selected ? [
-    { metric: "CPU", value: selected.log.cpu_usage },
-    { metric: "Memory", value: selected.log.memory_usage },
-    { metric: "Disk", value: selected.log.disk_usage },
-    { metric: "Errors", value: Math.min(100, selected.log.error_count * 2) },
-    { metric: "Response", value: Math.min(100, selected.log.response_time_ms / 100) },
-    { metric: "Security", value: Math.min(100, selected.log.failed_logins * 5) },
+  const radarData = sel ? [
+    {m:"CPU",    v:sel.log.cpu_usage},
+    {m:"Memory", v:sel.log.memory_usage},
+    {m:"Disk",   v:sel.log.disk_usage},
+    {m:"Errors", v:Math.min(100,sel.log.error_count*2)},
+    {m:"Latency",v:Math.min(100,sel.log.response_time_ms/100)},
+    {m:"Security",v:Math.min(100,sel.log.failed_logins*5)},
   ] : [];
 
   return (
-    <div style={{ display: "flex", gap: 20, height: "calc(100vh - 120px)" }}>
-      {/* Left: Anomaly List */}
-      <div style={{ width: 380, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-        {/* Filter tabs */}
-        <div style={{ display: "flex", gap: 8, background: "transparent", padding: 6, borderRadius: 10, border: "1px solid #1a2d4a" }}>
-          {["ALL", "CRITICAL", "HIGH", "MEDIUM", "LOW"].map(f => (
-            <button key={f} onClick={() => setFilter(f)} style={{
-              flex: 1, padding: "6px 4px", fontSize: 10, fontWeight: 600,
-              borderRadius: 6, border: "none", cursor: "pointer",
-              background: filter === f ? (SEVERITY_CONFIG[f]?.border || "#1a2d4a") : "transparent",
-              color: filter === f ? (SEVERITY_CONFIG[f]?.color || "#60a5fa") : "#4a6fa5",
-              letterSpacing: "0.03em",
-            }}>{f}</button>
-          ))}
+    <div className="page-enter anomalies-page" style={{ display:"flex", gap:16, height:"calc(100vh - 120px)" }}>
+
+      {/* ── Left list ── */}
+      <div style={{ width:360, flexShrink:0, display:"flex", flexDirection:"column", gap:12 }}>
+        {/* Filter pills */}
+        <div className="anomaly-filters" style={{ display:"flex", gap:6, background:T.bgSurface,
+          padding:5, borderRadius:10, border:`1px solid ${T.borderS}` }}>
+          {["ALL","CRITICAL","HIGH","MEDIUM","LOW"].map(f=>{
+            const c=SEV_CFG[f];
+            const act=filter===f;
+            return (
+              <button key={f} onClick={()=>setFilter(f)} style={{
+                flex:1, padding:"5px 2px", fontSize:9, fontWeight:700,
+                borderRadius:6, border:"none", cursor:"pointer",
+                letterSpacing:"0.06em",
+                background: act?(c?c.border:"rgba(59,130,246,0.2)"):"transparent",
+                color: act?(c?c.color:T.blue):T.textM,
+                transition:"all 0.15s",
+              }}>{f}</button>
+            );
+          })}
         </div>
 
-        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
-          {loading && <div style={{ color: "#4a6fa5", textAlign: "center", marginTop: 40 }}>Analyzing logs...</div>}
-          {!loading && filtered.length === 0 && (
-            <div style={{ color: "#4a6fa5", textAlign: "center", marginTop: 40 }}>
-              <div style={{ fontSize: 32 }}>✅</div>
-              <div style={{ marginTop: 8 }}>No anomalies detected</div>
+        {/* List */}
+        <div style={{ flex:1, overflowY:"auto", display:"flex", flexDirection:"column", gap:7 }}>
+          {loading&&<div style={{color:T.textM,textAlign:"center",marginTop:40,fontSize:12}}>Analyzing logs…</div>}
+          {!loading&&filtered.length===0&&(
+            <div style={{textAlign:"center",marginTop:40}}>
+              <div style={{fontSize:32}}>✅</div>
+              <div style={{color:T.textS,marginTop:8,fontSize:13}}>No anomalies detected</div>
             </div>
           )}
-          {filtered.map(a => {
-            const cfg = SEVERITY_CONFIG[a.severity] || SEVERITY_CONFIG.LOW;
+          {filtered.map(a=>{
+            const c=SEV_CFG[a.severity]||SEV_CFG.LOW;
+            const act=sel?.id===a.id;
             return (
-              <div key={a.id} onClick={() => setSelected(a)} style={{
-                padding: "14px 16px", background: selected?.id === a.id ? "#0f1e3a" : "#0d1729",
-                border: `1px solid ${selected?.id === a.id ? "#1e3a6a" : "#1a2d4a"}`,
-                borderLeft: `3px solid ${cfg.color}`, borderRadius: 10, cursor: "pointer",
-                transition: "all 0.15s",
+              <div key={a.id} className="anomaly-list-item" onClick={()=>{setSelected(a);setFixResult(null);}} style={{
+                padding:"12px 14px", borderRadius:10, cursor:"pointer",
+                background: act?T.bgElevated:T.bgSurface,
+                border:`1px solid ${act?c.border:T.borderS}`,
+                borderLeft:`3px solid ${c.color}`,
+                transition:"all 0.15s",
+                boxShadow: act?`0 0 16px ${c.color}18`:"none",
               }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                  <span style={{ fontSize: 16 }}>{ISSUE_ICONS[a.issue_type] || "⚠️"}</span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: cfg.color }}>
-                    {a.issue_type.replace(/_/g, " ")}
+                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:7}}>
+                  <span style={{fontSize:15}}>{ISSUE_ICON[a.issue_type]||"⚠️"}</span>
+                  <span className="anomaly-issue-title" style={{fontSize:11,fontWeight:700,color:c.color,flex:1}}>
+                    {a.issue_type.replace(/_/g," ")}
                   </span>
-                  <span style={{
-                    marginLeft: "auto", fontSize: 9, padding: "2px 6px",
-                    background: cfg.bg, border: `1px solid ${cfg.border}`,
-                    color: cfg.color, borderRadius: 4, fontWeight: 700,
-                  }}>{a.severity}</span>
+                  <SeverityBadge level={a.severity} />
                 </div>
-                <div style={{ display: "flex", gap: 12 }}>
-                  {[
-                    { l: "CPU", v: `${a.log.cpu_usage}%` },
-                    { l: "MEM", v: `${a.log.memory_usage}%` },
-                    { l: "Score", v: a.anomaly_score },
-                  ].map(m => (
+                <div style={{display:"flex",gap:14}}>
+                  {[{l:"CPU",v:`${a.log.cpu_usage}%`},{l:"MEM",v:`${a.log.memory_usage}%`},{l:"SCORE",v:a.anomaly_score}].map(m=>(
                     <div key={m.l}>
-                      <div style={{ fontSize: 9, color: "#2a3f5f" }}>{m.l}</div>
-                      <div style={{ fontSize: 12, color: "#94a3b8", fontWeight: 600 }}>{m.v}</div>
+                      <div style={{fontSize:8,color:T.textM,letterSpacing:"0.06em"}}>{m.l}</div>
+                      <div style={{fontSize:11,fontWeight:700,color:T.textS,fontFamily:"var(--font-mono)"}}>{m.v}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ fontSize: 10, color: "#2a3f5f", marginTop: 6 }}>{a.log.server}</div>
+                <div style={{fontSize:9,color:T.textM,marginTop:6,fontFamily:"var(--font-mono)"}}>{a.log.server}</div>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Right: Detail Panel */}
-      {selected && sc && (
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
-          {/* Header */}
-          <div style={{
-            background: "transparent", border: `1px solid ${sc.border}`, borderRadius: 12, padding: 20,
-            borderTop: `3px solid ${sc.color}`,
+      {/* ── Right detail ── */}
+      {sel&&sc&&(
+        <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",gap:14}}>
+          {/* Header card */}
+          <div className="anomaly-detail-card" style={{
+            padding:20,background:T.bgSurface,borderRadius:14,
+            border:`1px solid ${sc.border}`,
+            borderTop:`3px solid ${sc.color}`,
+            boxShadow:`0 0 24px ${sc.color}12`,
           }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                  <span style={{ fontSize: 28 }}>{ISSUE_ICONS[selected.issue_type]}</span>
-                  <div>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: sc.color }}>
-                      {selected.issue_type.replace(/_/g, " ")}
-                    </div>
-                    <div style={{ fontSize: 12, color: "#64748b" }}>{selected.log.server} · {selected.log.service}</div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
+              <div style={{display:"flex",alignItems:"center",gap:12}}>
+                <span style={{fontSize:32}}>{ISSUE_ICON[sel.issue_type]}</span>
+                <div>
+                  <div className="anomaly-issue-title" style={{fontFamily:"var(--font-display)",fontSize:18,fontWeight:800,color:sc.color}}>
+                    {sel.issue_type.replace(/_/g," ")}
+                  </div>
+                  <div style={{fontSize:11,color:T.textM,marginTop:2,fontFamily:"var(--font-mono)"}}>
+                    {sel.log.server} · {sel.log.service}
                   </div>
                 </div>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 11, color: "#4a6fa5" }}>Confidence</div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: sc.color }}>{selected.confidence}%</div>
+              <div style={{textAlign:"right"}}>
+                <div style={{fontSize:9,color:T.textM,marginBottom:2,letterSpacing:"0.08em"}}>CONFIDENCE</div>
+                <div className="anomaly-confidence" style={{fontFamily:"var(--font-display)",fontSize:28,fontWeight:800,color:sc.color,lineHeight:1}}>
+                  {sel.confidence}%
+                </div>
               </div>
             </div>
 
-            <div style={{ marginTop: 12, padding: 12, background: "transparent", borderRadius: 8, border: "1px solid #1a2d4a" }}>
-              <div style={{ fontSize: 11, color: "#4a6fa5", marginBottom: 4 }}>RECOMMENDED ACTION</div>
-              <div style={{ fontSize: 13, color: "#94a3b8" }}>{selected.recommended_action}</div>
+            {/* Recommended action */}
+            <div className="anomaly-recommended-action" style={{padding:12,background:T.bgBase,borderRadius:8,
+              border:`1px solid ${T.borderS}`,marginBottom:14}}>
+              <div style={{fontSize:9,color:T.textM,letterSpacing:"0.08em",marginBottom:4}}>RECOMMENDED ACTION</div>
+              <div style={{fontSize:12,color:"rgba(240,246,255,0.75)",lineHeight:1.55}}>{sel.recommended_action}</div>
             </div>
 
-            {selected.auto_fixable && (
-              <button
-                onClick={() => handleFix(selected)}
-                disabled={!!fixing}
-                style={{
-                  marginTop: 14, padding: "10px 24px", fontSize: 13, fontWeight: 700,
-                  background: fixing ? "#1a2d4a" : "linear-gradient(135deg, #1d4ed8, #6d28d9)",
-                  color: fixing ? "#4a6fa5" : "white", border: "none", borderRadius: 8,
-                  cursor: fixing ? "not-allowed" : "pointer", width: "100%",
-                }}
-              >
-                {fixing ? "⚡ Applying Auto-Fix..." : "⚡ Apply Auto-Fix Now"}
-              </button>
+            {sel.auto_fixable&&(
+              <PrimaryBtn className="anomaly-apply-fix" onClick={handleFix} loading={fixing} full>
+                {fixing?"⚡ Applying Auto-Fix…":"⚡ Apply Auto-Fix Now"}
+              </PrimaryBtn>
             )}
           </div>
 
-          {/* Fix Result */}
-          {fixResult && (
-            <div style={{
-              background: "#0a1f0a", border: "1px solid #1a4a1a", borderRadius: 12, padding: 20,
-            }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#22c55e", marginBottom: 12 }}>
-                ✅ Fix Applied Successfully
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {fixResult.steps?.map((step, i) => (
-                  <div key={i} style={{ display: "flex", gap: 8, fontSize: 12, color: "#4ade80" }}>
-                    <span style={{ color: "#16a34a" }}>✓</span> {step}
+          {/* Fix result */}
+          {fixResult&&(
+            <div style={{padding:18,background:"rgba(16,185,129,0.07)",
+              border:"1px solid rgba(16,185,129,0.28)",borderRadius:14}}>
+              <div style={{fontSize:13,fontWeight:700,color:T.green,marginBottom:10}}>✅ Fix Applied Successfully</div>
+              <div style={{display:"flex",flexDirection:"column",gap:5}}>
+                {fixResult.steps?.map((s,i)=>(
+                  <div key={i} style={{display:"flex",gap:8,fontSize:12,color:"#6ee7b7"}}>
+                    <span style={{color:T.green,flexShrink:0}}>✓</span>{s}
                   </div>
                 ))}
               </div>
-              {fixResult.freed_gb && (
-                <div style={{ marginTop: 10, padding: 8, background: "#0d2a0d", borderRadius: 6 }}>
-                  <span style={{ fontSize: 12, color: "#22c55e" }}>Freed {fixResult.freed_gb}GB of disk space</span>
-                </div>
-              )}
             </div>
           )}
 
-          {/* Radar Chart */}
-          <div style={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#94a3b8", marginBottom: 12 }}>
-              Anomaly Signature — Metric Fingerprint
-            </div>
+          {/* Radar chart */}
+          <Panel title="Anomaly Signature">
             <ResponsiveContainer width="100%" height={200}>
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="#1a2d4a" />
-                <PolarAngleAxis dataKey="metric" tick={{ fill: "#64748b", fontSize: 11 }} />
-                <Radar dataKey="value" stroke={sc.color} fill={sc.color} fillOpacity={0.15} strokeWidth={2} />
-                <Tooltip contentStyle={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 8 }} />
+              <RadarChart data={radarData} margin={{top:10,right:20,bottom:20,left:20}}>
+                <PolarGrid stroke="rgba(80,140,240,0.15)" />
+                <PolarAngleAxis dataKey="m" tick={{fill:T.textM,fontSize:10}} />
+                <Radar dataKey="v" stroke={sc.color} fill={sc.color} fillOpacity={0.15} strokeWidth={2}
+                  dot={{fill:sc.color,r:3}} />
+                <Tooltip contentStyle={{background:T.bgBase,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11}} />
               </RadarChart>
             </ResponsiveContainer>
-          </div>
+          </Panel>
 
-          {/* Raw Metrics */}
-          <div style={{ background: "transparent", border: "1px solid #1a2d4a", borderRadius: 12, padding: 20 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#94a3b8", marginBottom: 12 }}>Raw Metrics at Detection Time</div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+          {/* Raw metrics grid */}
+          <Panel title="Raw Metrics at Detection">
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
               {[
-                { l: "CPU", v: `${selected.log.cpu_usage}%`, c: selected.log.cpu_usage > 85 ? "#ef4444" : "#3b82f6" },
-                { l: "Memory", v: `${selected.log.memory_usage}%`, c: selected.log.memory_usage > 85 ? "#ef4444" : "#8b5cf6" },
-                { l: "Disk", v: `${selected.log.disk_usage}%`, c: selected.log.disk_usage > 90 ? "#ef4444" : "#f59e0b" },
-                { l: "Errors", v: selected.log.error_count, c: selected.log.error_count > 20 ? "#ef4444" : "#10b981" },
-                { l: "Response", v: `${selected.log.response_time_ms}ms`, c: selected.log.response_time_ms > 2000 ? "#ef4444" : "#06b6d4" },
-                { l: "Failed Logins", v: selected.log.failed_logins, c: selected.log.failed_logins > 10 ? "#ef4444" : "#64748b" },
-              ].map(m => (
-                <div key={m.l} style={{ padding: "10px 12px", background: "transparent", borderRadius: 8, border: "1px solid #1a2d4a" }}>
-                  <div style={{ fontSize: 10, color: "#4a6fa5" }}>{m.l}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: m.c, marginTop: 2 }}>{m.v}</div>
+                {l:"CPU",v:`${sel.log.cpu_usage}%`,  c:sel.log.cpu_usage>85?T.red:T.blue},
+                {l:"Memory",v:`${sel.log.memory_usage}%`, c:sel.log.memory_usage>85?T.red:"#7c3aed"},
+                {l:"Disk",v:`${sel.log.disk_usage}%`,    c:sel.log.disk_usage>90?T.red:T.amber},
+                {l:"Errors",v:sel.log.error_count,        c:sel.log.error_count>20?T.red:T.green},
+                {l:"Response",v:`${sel.log.response_time_ms}ms`,c:sel.log.response_time_ms>2000?T.red:T.cyan},
+                {l:"Failed Logins",v:sel.log.failed_logins,    c:sel.log.failed_logins>10?T.red:T.textS},
+              ].map(m=>(
+                <div key={m.l} className="anomaly-raw-metric" style={{padding:"10px 12px",background:T.bgBase,
+                  borderRadius:8,border:`1px solid ${T.borderS}`}}>
+                  <div style={{fontSize:9,color:T.textM,letterSpacing:"0.06em"}}>{m.l}</div>
+                  <div style={{fontSize:20,fontWeight:800,color:m.c,marginTop:3,
+                    fontFamily:"var(--font-display)"}}>{m.v}</div>
                 </div>
               ))}
             </div>
-          </div>
+          </Panel>
         </div>
       )}
     </div>

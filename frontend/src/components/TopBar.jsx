@@ -1,44 +1,107 @@
 import { useState, useEffect } from "react";
-import LiquidGlass from "./LiquidGlass";
+import { LiveBadge, T } from "./UI";
+import { api } from "../utils/api";
 
-export default function TopBar({ page }) {
-  const [time, setTime] = useState(new Date());
+const PAGE_META = {
+  dashboard: { title:"Operations Dashboard",   sub:"Real-time infrastructure health" },
+  anomalies: { title:"Anomaly Detection",      sub:"AI-powered ML threat surface" },
+  logs:      { title:"Log Explorer",           sub:"Live system log stream & search" },
+  servers:   { title:"Server Fleet",           sub:"12-node infrastructure overview" },
+  copilot:   { title:"AI Copilot",             sub:"Natural language ops assistant" },
+};
+
+function MetricPill({ label, value, color = T.textS }) {
+  return (
+    <div style={{
+      display:"flex", alignItems:"center", gap:5,
+      padding:"5px 11px",
+      background:"rgba(255,255,255,0.045)",
+      border:"1px solid rgba(255,255,255,0.09)",
+      borderRadius:20, flexShrink:0, whiteSpace:"nowrap",
+    }}>
+      <span style={{ fontSize:10, color:"#91a7c5", letterSpacing:"0.05em" }}>{label}</span>
+      <span style={{ fontSize:12, fontWeight:700, color, fontFamily:"var(--font-mono)" }}>{value}</span>
+    </div>
+  );
+}
+
+export default function TopBar({ page, theme, onThemeToggle }) {
+  const [time, setTime]       = useState(new Date());
+  const [metrics, setMetrics] = useState(null);
+
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
+  useEffect(() => {
+    const load = async () => { try { setMetrics(await api.get("/metrics")); } catch {} };
+    load();
+    const t = setInterval(load, 4000);
+    return () => clearInterval(t);
+  }, []);
+
+  const { title, sub } = PAGE_META[page] || {};
+  const metricColor = (v, t1=70, t2=85) => v>t2 ? T.red : v>t1 ? T.amber : T.green;
+
   return (
-    <LiquidGlass as="header" variant="regular" className="app-navbar" padding="0" style={{
-      height: 98,
-      display: "flex", alignItems: "center", padding: "0 34px", gap: 26,
-      flexShrink: 0,
-    }}>
-      <div className="topbar-left">
-        <div className="topbar-live" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", background: "rgba(48,179,128,.16)", border: "1px solid rgba(93,220,170,.38)", borderRadius: 999 }}>
-          <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#62e49d", display: "inline-block", boxShadow: "0 0 8px #4ade80" }} />
-          <span style={{ fontSize: 13, color: "#72e9ae", fontWeight: 600 }}>All Systems Live</span>
-        </div>
-        <div className="topbar-search" style={{ width: 390, display: "flex", alignItems: "center", gap: 12, padding: "13px 17px", color: "#7185a8", background: "rgba(8,18,42,.52)", border: "1px solid rgba(144,175,233,.2)", borderRadius: 10, fontSize: 14 }}>
-          <span style={{ fontSize: 19 }}>⌕</span><span>Search systems, logs, alerts...</span>
-        </div>
+    <header className="topbar-card">
+      {/* Page title */}
+      <div className="topbar-heading">
+        <div className="topbar-title">{title}</div>
+        <div className="topbar-subtitle">{sub}</div>
       </div>
 
-      <div className="topbar-right">
-        <div className="topbar-date" style={{ padding: "9px 12px", color: "#94a9ca", fontSize: 13, fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
-          {time.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })} · {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-        </div>
-        <div style={{
-          width: 40, height: 40, borderRadius: "50%",
-          background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 13, fontWeight: 700, color: "white", cursor: "pointer",
-        }}>AT</div>
+      {/* Scrolling metric pills */}
+      <div className="topbar-metrics">
+        {metrics && <>
+          <MetricPill label="CPU"  value={`${metrics.cpu}%`}  color={metricColor(metrics.cpu)} />
+          <MetricPill label="MEM"  value={`${metrics.memory}%`} color={metricColor(metrics.memory)} />
+          <MetricPill label="DISK" value={`${metrics.disk}%`}   color={metricColor(metrics.disk,80,92)} />
+          <MetricPill label="RPS"  value={`${metrics.requests_per_sec?.toLocaleString()}`} color={T.blue} />
+          <MetricPill label="ERR%"  value={`${metrics.error_rate}%`} color={metrics.error_rate>2?T.red:T.green} />
+          <MetricPill label="P50"  value={`${metrics.avg_response_ms}ms`} color={metrics.avg_response_ms>500?T.amber:T.textS} />
+        </>}
       </div>
 
-      <style>{`
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-      `}</style>
-    </LiquidGlass>
+      {/* Right: live + clock + avatar */}
+      <div className="topbar-actions">
+        <LiveBadge />
+
+        <button
+          type="button"
+          className="theme-toggle"
+          onClick={onThemeToggle}
+          aria-label="Toggle color theme"
+          aria-pressed={theme === "light"}
+          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+        >
+          {theme === "light" ? (
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <circle cx="10" cy="10" r="3.4" />
+              <path d="M10 1.8v2M10 16.2v2M18.2 10h-2M3.8 10h-2m14-5.8-1.4 1.4M5.6 14.4l-1.4 1.4m11.6 0-1.4-1.4M5.6 5.6 4.2 4.2" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M16.8 12.2A7.2 7.2 0 0 1 7.8 3.2a7.4 7.4 0 1 0 9 9Z" />
+            </svg>
+          )}
+          <span>{theme === "light" ? "Light" : "Dark"}</span>
+        </button>
+
+        {/* Clock */}
+        <div className="topbar-clock">
+          <div className="topbar-clock-time">
+            {time.toLocaleTimeString()}
+          </div>
+          <div className="topbar-clock-date">
+            {time.toLocaleDateString("en-US",{month:"short",day:"numeric"})}
+          </div>
+        </div>
+
+        {/* Avatar */}
+        <div className="topbar-avatar" aria-label="Operations profile">OP</div>
+      </div>
+    </header>
   );
 }

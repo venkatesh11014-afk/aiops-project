@@ -3,11 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^7.1.0",
+    "@react-spring/web": "^10.1.2",
+    "@studio-freight/lenis": "^1.0.42",
+    "@tabler/icons-react": "^3.48.0",
+    "clsx": "^2.1.1",
+    "framer-motion": "^13.4.5",
     "ogl": "^1.0.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-intersection-observer": "^11.0.1",
     "react-scripts": "5.0.1",
-    "recharts": "^2.8.0"
+    "recharts": "^2.8.0",
+    "tailwind-merge": "^3.7.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -24,5 +32,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "^4.9.5"
   }
 }
